@@ -4,6 +4,7 @@ import { useGLTF, ScrollControls, Scroll, useScroll, Html, ContactShadows, Envir
 import * as THREE from 'three';
 
 // --- CRITICAL FIX: MANUALLY DECLARE R3F TYPES TO PREVENT ERRORS ---
+// We keep this just in case, though installing the packages usually solves it.
 declare module 'react' {
   namespace JSX {
     interface IntrinsicElements {
@@ -29,7 +30,8 @@ const ScrollBasedModel: React.FC = () => {
   const meshRef = useRef<THREE.Mesh>(null);
   const scroll = useScroll(); // Hook into ScrollControls
   
-  useFrame((state, delta) => {
+  // 🟢 FIX: Added explicit types to state and delta to prevent TS7006 error
+  useFrame((state: any, delta: number) => {
     if (!meshRef.current) return;
     
     // Access the scroll offset (0 to 1)
