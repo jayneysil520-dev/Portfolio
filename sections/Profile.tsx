@@ -388,7 +388,7 @@ const StablePhoto: React.FC<{ hasEntered: boolean }> = ({ hasEntered }) => {
             ref={ref}
             className="absolute w-[320px] h-[440px] md:w-[400px] md:h-[550px]"
             style={{
-                top: '5%', // 🟢 MOVED UP from 15%
+                top: '-10%', // 🟢 MOVED UP from 15%
                 left: '15%',
                 zIndex: 20,
                 transformStyle: "preserve-3d",
@@ -527,10 +527,10 @@ const Profile: React.FC = () => {
 
   // 🟢 MOVED UP: Adjusted all card positions upwards
   const cardPositions = [
-      { top: '0%',  left: '55%', rotate: '-2deg' }, // was 5%
-      { top: '23%', left: '60%', rotate: '1deg' },  // was 28%
-      { top: '46%', left: '56%', rotate: '-1deg' }, // was 51%
-      { top: '69%', left: '59%', rotate: '2deg' },  // was 74%
+      { top: '-10%',  left: '52%', rotate: '-4deg' }, // was 5%
+      { top: '13%', left: '60%', rotate: '2deg' },  // was 28%
+      { top: '36%', left: '54%', rotate: '-2deg' }, // was 51%
+      { top: '59%', left: '59%', rotate: '3deg' },  // was 74%
   ];
 
   return (
@@ -588,7 +588,7 @@ const Profile: React.FC = () => {
                 <motion.div 
                     className="absolute text-left pointer-events-auto"
                     style={{ 
-                        top: '65%', // 🟢 MOVED UP from 80%
+                        top: '55%', // 🟢 MOVED UP from 80%
                         left: '22%', 
                         transform: `translateZ(${DEPTHS.MAIN}px) rotateX(-10deg) rotateZ(-5deg)`,
                         width: '450px',

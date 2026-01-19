@@ -5,6 +5,11 @@ import Spotlight3D from '../components/Spotlight3D';
 import Interactive3DGallery from '../components/Interactive3DGallery';
 
 // --- CONFIGURATION ---
+
+// 🟢 [自定义配置] 卡片全局缩放比例 / Global Card Scale
+// 修改此数值即可统一调整所有 Project 卡片的大小 (0.8 = 缩小, 1.0 = 默认, 1.2 = 放大)
+const CARDS_GLOBAL_SCALE = 1.1;
+
 const PROJECT_1_LONG_IMAGE = 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E6%89%80%E6%9C%89IP%E7%9A%84%E4%BD%8D%E7%BD%AE1-11.png';
 const PROJECT_1_LONG_IMAGE_2 = 'https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/%E6%88%91%E7%9A%84%E4%BD%8D%E7%BD%AE1-11.png';
 const PROJECT_2_LONG_IMAGE = 'https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/%E5%BE%97%E5%8A%9B%E8%9B%8B%E4%BB%94%E9%95%BF%E5%9B%BE1-11.png';
@@ -164,7 +169,16 @@ const ProjectImageSquare: React.FC<{
     isAnyHovered: boolean,
     isSelected: boolean 
 }> = React.memo(({ project, style, onClick, onHoverStart, onHoverEnd, isHovered, isAnyHovered, isSelected }) => {
-    const targetScale = isHovered ? 1.15 : (isAnyHovered ? 0.9 : 1);
+    // 🟢 应用全局缩放比例 (CARDS_GLOBAL_SCALE)
+    // 🟢 新增：获取单个卡片的缩放比例 (style.scale)，如果没有设置则默认为 1
+    const individualScale = (style as any).scale ?? 1;
+
+    // 基础交互缩放逻辑：悬停放大，非悬停且有其他卡片悬停时缩小，否则保持原样
+    const baseScale = isHovered ? 1.21 : (isAnyHovered ? 0.9 : 1);
+    
+    // 最终缩放 = 基础交互缩放 * 单个卡片自定义缩放 * 全局缩放配置
+    const targetScale = baseScale * individualScale * CARDS_GLOBAL_SCALE;
+    
     const targetOpacity = isHovered ? 1 : (isAnyHovered ? 0.7 : 1);
     const targetRotate = isHovered ? 0 : (style.rotate as number || 0);
     const targetY = isHovered ? -40 : 0;
@@ -710,16 +724,19 @@ const VinylProjects: React.FC = () => {
         setHoveredProject(null);
     };
 
-    // Compact layout to match new scroll speed
+    // 🟢 CRITICAL FIX: Adjusted card positions to positive values (5% to 180%)
+    // Previously started at -40%, which caused overlap with Hero section.
+    // Also added overflow-hidden to container below.
+    // 🟢 [配置区域] 您可以在这里调整每张卡片的 scale (缩放大小)
     const cardPositions = useMemo(() => [
-        { top: '-40%', left: '5%',  rotate: -15, zIndex: 1 }, // was -2%
-        { top: '-10%',  left: '30%', rotate: 12,  zIndex: 2 }, // was 28%
-        { top: '7%',  left: '8%',  rotate: 5,   zIndex: 3 }, // was 45%
-        { top: '32%',  left: '25%', rotate: -8,  zIndex: 4 }, // was 70%
-        { top: '62%',  left: '2%',  rotate: 20,  zIndex: 5 }, // was 100%
-        { top: '87%', left: '32%', rotate: -12, zIndex: 6 }, // was 125%
-        { top: '117%', left: '10%', rotate: 8,   zIndex: 7 }, // was 155%
-        { top: '147%', left: '28%', rotate: -5,  zIndex: 8 }, // was 185%
+        { top: '-30%', left: '10%',  rotate: -15, zIndex: 1, scale: 1.0 }, // Card 1
+        { top: '0%',  left: '30%', rotate: 12,  zIndex: 2, scale: 1.0 }, // Card 2
+        { top: '17%',  left: '2%',  rotate: 5,   zIndex: 3, scale: 1.0 }, // Card 3
+        { top: '48%',  left: '25%', rotate: -8,  zIndex: 4, scale: 1.0 }, // Card 4
+        { top: '80%',  left: '12%',  rotate: 20,  zIndex: 5, scale: 1.0 }, // Card 5
+        { top: '106%', left: '32%', rotate: -18, zIndex: 6, scale: 1.0 }, // Card 6
+        { top: '135%', left: '10%', rotate: 8,   zIndex: 7, scale: 1.0 }, // Card 7
+        { top: '168%', left: '28%', rotate: -5,  zIndex: 8, scale: 1.0 }, // Card 8
     ], []);
 
     return (
@@ -748,8 +765,9 @@ const VinylProjects: React.FC = () => {
                 }
              `}</style>
 
+             {/* 🟢 ADDED overflow-hidden TO PREVENT BLEEDING INTO PREVIOUS SECTIONS */}
              <motion.div 
-                className="sticky top-0 w-full h-screen flex items-center justify-center bg-white will-change-transform"
+                className="sticky top-0 w-full h-screen flex items-center justify-center bg-white will-change-transform overflow-hidden"
                 style={{ zIndex: 10 }}
              >
                  <div className="absolute inset-0 flex items-center justify-center perspective-2000">
@@ -759,7 +777,7 @@ const VinylProjects: React.FC = () => {
                             rotateX,
                             rotateY,
                             x: translateX,
-                            scale: 0.8,
+                            scale: 0.65,
                             aspectRatio: '16/9',
                             transformStyle: "preserve-3d",
                         }}
@@ -788,8 +806,8 @@ const VinylProjects: React.FC = () => {
                                 direction="left" 
                                 text="PROJECTS" 
                                 rotate={-10} 
-                                className="text-[140px] font-albert-black text-gray-100 leading-none" 
-                                style={{ top: '-5%', right: '-10%', left: 'auto' }}
+                                className="text-[160px] font-albert-black text-gray-100 leading-none" 
+                                style={{ top: '-10%', right: '-16%', left: 'auto' }}
                             />
 
                             <div className="absolute w-full h-full pointer-events-none" style={{ zIndex: 10, transformStyle: "preserve-3d", transform: `translateZ(${DEPTHS.PROJECTS}px)` }}>

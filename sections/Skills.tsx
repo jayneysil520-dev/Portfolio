@@ -320,10 +320,10 @@ const Skills: React.FC = () => {
 
   // 🟢 MOVED UP: Adjusted all card positions upwards ~10%
   const cardPositions = [
-      { top: '0%',  left: '15%', rotate: -2 },   // was 10%
-      { top: '18%', left: '20%', rotate: 1 },    // was 28%
-      { top: '36%', left: '16%', rotate: -1 },   // was 46%
-      { top: '54%', left: '19%', rotate: 2 },    // was 64%
+      { top: '-5%',  left: '15%', rotate: -2 },   // was 10%
+      { top: '13%', left: '20%', rotate: 1 },    // was 28%
+      { top: '31%', left: '16%', rotate: -1 },   // was 46%
+      { top: '49%', left: '19%', rotate: 2 },    // was 64%
   ];
 
   return (
@@ -389,7 +389,7 @@ const Skills: React.FC = () => {
                 <div 
                     className="absolute w-full flex justify-start gap-8 pointer-events-auto"
                     style={{
-                        top: '80%', // 🟢 MOVED UP from 90%
+                        top: '74%', // 🟢 MOVED UP from 90%
                         left: '15%', 
                         transform: `translateZ(${DEPTHS.MAIN}px) rotateX(-10deg)`,
                         zIndex: 20
