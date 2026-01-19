@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glei Portfolio</title>
+  <!-- 🟢 修复：将 Google Fonts 替换为国内镜像 fonts.font.im，解决加载阻塞问题 -->
+  <link rel="preconnect" href="https://fonts.font.im">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.font.im/css2?family=Albert+Sans:ital,wght@0,100..900;1,100..900&family=Inter:wght@300;400;500;600;700&family=M+PLUS+Rounded+1c:wght@700;800;900&display=swap"
+    rel="stylesheet">
+  
+  <!-- 修复关键：添加 Tailwind CSS CDN，让样式立即生效 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            'albert-black': ['"Albert Sans"', 'sans-serif'],
+            'albert-bold': ['"Albert Sans"', 'sans-serif'],
+            'albert-semibold': ['"Albert Sans"', 'sans-serif'],
+            'albert-regular': ['"Albert Sans"', 'sans-serif'],
+            'albert-light': ['"Albert Sans"', 'sans-serif'],
+            'hanchanyuanyuan': ['"M PLUS Rounded 1c"', 'sans-serif'],
+            'franklin-cond': ['"Franklin Gothic Medium Cond"', 'sans-serif'],
+            'opposans': ['"OPPOSans H"', 'sans-serif'],
+            'arizonia': ['"Arizonia"', 'cursive'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <style>
+    /* --- CUSTOM FONTS FROM GITHUB (Updated to China Mirror) --- */
+    /* 🟢 修复：所有字体文件链接替换为 jsd.cdn.zzko.cn 国内镜像 */
+    @font-face {
+        font-family: 'Franklin Gothic Book';
+        src: url('https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/FRABK.TTF') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Franklin Gothic Book Italic';
+        src: url('https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/FRABKIT.TTF') format('truetype');
+        font-weight: normal;
+        font-style: italic;
+    }
+    @font-face {
+        font-family: 'Franklin Gothic Demi';
+        src: url('https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/FRADM.TTF') format('truetype');
+        font-weight: 600;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Franklin Gothic Demi Condensed';
+        src: url('https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/FRADMCN.TTF') format('truetype');
+        font-weight: 600;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Franklin Gothic Demi Italic';
+        src: url('https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/FRADMIT.TTF') format('truetype');
+        font-weight: 600;
+        font-style: italic;
+    }
+    @font-face {
+        font-family: 'Franklin Gothic Heavy';
+        src: url('https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/FRAHV.TTF') format('truetype');
+        font-weight: 900;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Franklin Gothic Heavy Italic';
+        src: url('https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/FRAHVIT.TTF') format('truetype');
+        font-weight: 900;
+        font-style: italic;
+    }
+    @font-face {
+        font-family: 'Franklin Gothic Medium';
+        src: url('https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/FRAMD.TTF') format('truetype');
+        font-weight: 500;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Franklin Gothic Medium Cond'; /* This is the one used for Fehn */
+        src: url('https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/FRAMDCN.TTF') format('truetype');
+        font-weight: 500;
+        font-style: normal;
+    }
+    @font-face {
+        font-family: 'Franklin Gothic Medium Italic';
+        src: url('https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/FRAMDIT.TTF') format('truetype');
+        font-weight: 500;
+        font-style: italic;
+    }
+    @font-face {
+        font-family: 'OPPOSans H';
+        src: url('https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/OPPOSans-H.ttf') format('truetype');
+        font-weight: 900;
+    }
+    @font-face {
+        font-family: 'Arizonia';
+        src: url('https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/Arizonia-Regular.ttf') format('truetype');
+    }
+
+    body {
+      font-family: 'Albert Sans', sans-serif;
+      background-color: #ffffff;
+      /* Pure white base */
+      color: #000000;
+      overflow-x: hidden;
+    }
+
+    /* Smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Scrollbar hiding for cleaner look */
+    ::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #fff;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: #ccc;
+      border-radius: 4px;
+    }
+
+    .font-albert-black {
+      font-family: 'Albert Sans', sans-serif;
+      font-weight: 900;
+    }
+
+    .font-albert-semibold {
+      font-family: 'Albert Sans', sans-serif;
+      font-weight: 600;
+    }
+
+    .font-albert-regular {
+      font-family: 'Albert Sans', sans-serif;
+      font-weight: 400;
+    }
+
+    .font-albert-light {
+      font-family: 'Albert Sans', sans-serif;
+      font-weight: 300;
+    }
+
+    /* Simulated HanChanTuanYuan with a rounded font fallback */
+    .font-hanchanyuanyuan {
+      font-family: 'M PLUS Rounded 1c', 'Albert Sans', sans-serif;
+      font-weight: 800;
+    }
+
+    .perspective-1000 {
+      perspective: 1000px;
+    }
+
+    .perspective-2000 {
+      perspective: 2000px;
+    }
+
+    .preserve-3d {
+      transform-style: preserve-3d;
+    }
+
+    .backface-hidden {
+      backface-visibility: hidden;
+    }
+
+    .rotate-y-180 {
+      transform: rotateY(180deg);
+    }
+  </style>
+  
+<!-- 保持 ImportMap 以便在当前环境正常运行 React -->
+<script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.3/",
+    "react": "https://esm.sh/react@^19.2.3",
+    "vite": "https://esm.sh/vite@^7.3.0",
+    "framer-motion": "https://esm.sh/framer-motion@^12.23.26",
+    "@vitejs/plugin-react": "https://esm.sh/@vitejs/plugin-react@^5.1.2",
+    "react-dom": "https://esm.sh/react-dom@^19.2.3",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.3/",
+    "@react-three/fiber": "https://esm.sh/@react-three/fiber@^9.5.0",
+    "@react-three/drei": "https://esm.sh/@react-three/drei@^10.7.7",
+    "three": "https://esm.sh/three@^0.182.0"
+  }
+}
+</script>
+</head>
+
+<body>
+  <div id="root"></div>
+  <!-- IMPORTANT: This script tag links your HTML to the React code -->
+  <script type="module" src="/index.tsx"></script>
+</body>
+
+</html>
