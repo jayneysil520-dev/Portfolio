@@ -28,7 +28,7 @@ const ICONS = {
     ),
     Xiaohongshu: (
         <svg width="45" height="45" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M4 12a8 8 0 0 1 8-8 8 8 0 0 1 8 8 8 8 0 0 1-8 8 8 8 0 0 1-8-8z" fill="none" stroke="currentColor" strokeWidth="2"/>
+            <path d="M4 12a8 8 0 0 1 8-8 8 8 0 0 1 8 8 8 8 0 0 1-8-8 8 8 0 0 1-8-8z" fill="none" stroke="currentColor" strokeWidth="2"/>
             <path d="M7 11.5c0-2 .5-3.5 1.5-4.5s2.5-1.5 3.5-1.5 2.5.5 3.5 1.5 1.5 2.5 1.5 4.5-1 4-2.5 5.5S12 18 12 18s-2.5-.5-4-1.5S7 13.5 7 11.5z" />
             <path d="M9 12h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
         </svg>
@@ -207,7 +207,7 @@ const Card3D: React.FC<{ item: typeof CONTACT_CARDS[number]; index: number }> = 
                                 color: isHovered ? item.color : '#000000',
                                 opacity: isHovered ? (item.qrCode ? 0 : 1) : 1 // Optionally fade icon if QR exists, but keeping it visible is fine too. Let's keep it visible but small.
                             }}
-                            className="text-black/80"
+                            className="text-[#1d1d1f]/80"
                         >
                             {item.icon}
                         </motion.div>
@@ -231,7 +231,7 @@ const Card3D: React.FC<{ item: typeof CONTACT_CARDS[number]; index: number }> = 
                              )}
 
                              <h3 className="text-sm font-bold tracking-widest text-gray-400 mb-2 uppercase">{item.title}</h3>
-                             <p className="text-xl font-albert-black text-black break-words leading-tight select-all">{item.value}</p>
+                             <p className="text-xl font-albert-black text-[#1d1d1f] break-words leading-tight select-all">{item.value}</p>
                              
                              {/* Changed text-xs to text-sm for "CLICK TO COPY" */}
                              <div className="mt-6 flex items-center justify-center gap-2 text-sm font-mono text-gray-400">

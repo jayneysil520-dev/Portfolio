@@ -200,7 +200,7 @@ const VinylLogo: React.FC = () => {
         {/* 2. 下一首按钮 */}
         <button 
             onClick={handleNext}
-            className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-black hover:bg-gray-100 transition-colors pointer-events-auto bg-white/50 backdrop-blur-sm z-10"
+            className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-[#1d1d1f] hover:bg-gray-100 transition-colors pointer-events-auto bg-white/50 backdrop-blur-sm z-10"
             title="Next Song"
         >
             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="none">
@@ -219,7 +219,7 @@ const VinylLogo: React.FC = () => {
                     transition={{ duration: 0.4, ease: [0.23, 1, 0.32, 1] }} // Smooth cubic ease
                     className="overflow-hidden flex items-center"
                 >
-                    <div className="whitespace-nowrap text-[10px] font-albert-black tracking-widest text-black mr-3">
+                    <div className="whitespace-nowrap text-[10px] font-albert-black tracking-widest text-[#1d1d1f] mr-3">
                         {currentSong.title}
                     </div>
                 </motion.div>
@@ -229,7 +229,7 @@ const VinylLogo: React.FC = () => {
         {/* 4. 静音按钮 */}
         <button 
             onClick={toggleMute}
-            className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-black hover:bg-gray-100 transition-colors pointer-events-auto bg-white/50 backdrop-blur-sm z-10"
+            className="w-8 h-8 rounded-full border border-gray-200 flex items-center justify-center text-[#1d1d1f] hover:bg-gray-100 transition-colors pointer-events-auto bg-white/50 backdrop-blur-sm z-10"
             title={isMuted ? "Unmute" : "Mute"}
         >
             <AnimatePresence mode="wait">

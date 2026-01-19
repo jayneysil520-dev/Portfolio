@@ -109,7 +109,7 @@ const Interactive3DGallery: React.FC = () => {
                 {/* PAGE 1: INTRO */}
                 <div className="w-full h-full flex items-center justify-start px-10 md:px-32 pointer-events-none">
                     <div className="max-w-xl">
-                        <h1 className="text-6xl md:text-8xl font-black text-black/90 mb-4 tracking-tighter leading-none">
+                        <h1 className="text-6xl md:text-8xl font-black text-[#1d1d1f]/90 mb-4 tracking-tighter leading-none">
                             IMMERSE<br/>YOURSELF
                         </h1>
                         <p className="text-lg text-gray-500 font-bold bg-white/60 backdrop-blur-md p-6 rounded-3xl border border-white/60 shadow-lg">
@@ -121,7 +121,7 @@ const Interactive3DGallery: React.FC = () => {
                 {/* PAGE 2: DETAILS (Appears at 100vh down) */}
                 <div className="w-full h-full flex items-center justify-end px-10 md:px-32 pointer-events-none">
                      <div className="max-w-md text-right">
-                        <h2 className="text-5xl md:text-7xl font-black text-black/80 mb-4 tracking-tighter">
+                        <h2 className="text-5xl md:text-7xl font-black text-[#1d1d1f]/80 mb-4 tracking-tighter">
                             FLUID<br/>MOTION
                         </h2>
                         <p className="text-lg text-gray-500 font-bold bg-white/60 backdrop-blur-md p-6 rounded-3xl border border-white/60 shadow-lg">
@@ -145,7 +145,7 @@ const Interactive3DGallery: React.FC = () => {
                 {/* PAGE 4: OUTRO (Appears at 300vh down) */}
                 <div className="w-full h-full flex items-center justify-center px-20 pointer-events-none">
                      <div className="text-center">
-                        <h2 className="text-9xl font-black text-black/5 mix-blend-multiply tracking-tighter">
+                        <h2 className="text-9xl font-black text-[#1d1d1f]/5 mix-blend-multiply tracking-tighter">
                             FIN
                         </h2>
                     </div>
@@ -157,7 +157,7 @@ const Interactive3DGallery: React.FC = () => {
 
       {/* Static UI Overlay (Fixed on top of canvas) */}
       <div className="absolute bottom-8 left-8 pointer-events-none z-10 flex gap-4">
-         <div className="px-4 py-2 bg-black/5 backdrop-blur rounded-full text-xs font-mono font-bold text-black/60 border border-black/10">
+         <div className="px-4 py-2 bg-black/5 backdrop-blur rounded-full text-xs font-mono font-bold text-[#1d1d1f]/60 border border-black/10">
              SCROLL TO INTERACT
          </div>
       </div>

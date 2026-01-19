@@ -54,7 +54,7 @@ const ScrambleHoverText: React.FC<ScrambleHoverTextProps> = ({ text, className =
 
   return (
     <span 
-      className={`inline-block cursor-default transition-colors duration-300 ${isHovering ? 'text-black' : 'text-gray-800'} ${className}`}
+      className={`inline-block cursor-default transition-colors duration-300 ${isHovering ? 'text-[#1d1d1f]' : 'text-gray-800'} ${className}`}
       onMouseEnter={startScramble}
       onMouseLeave={stopScramble}
     >

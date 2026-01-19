@@ -43,7 +43,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="bg-white min-h-screen text-black selection:bg-black selection:text-white relative">
+    <div className="bg-white min-h-screen text-[#1d1d1f] selection:bg-[#1d1d1f] selection:text-white relative">
       <AnimatePresence mode="wait">
         {isLoading && (
           <LoadingScreen onComplete={() => setIsLoading(false)} />
@@ -95,7 +95,7 @@ const App: React.FC = () => {
             className="relative z-[60] py-12 text-center text-gray-400 text-sm font-albert-light bg-white border-t border-gray-100"
           >
             <div className="mb-4">
-                <h3 className="text-xl font-bold text-black mb-2">CONTACT</h3>
+                <h3 className="text-xl font-bold text-[#1d1d1f] mb-2">CONTACT</h3>
                 <p>glei.design@example.com</p>
             </div>
             <p>&copy; {new Date().getFullYear()} zhanG minGlei. All Rights Reserved.</p>

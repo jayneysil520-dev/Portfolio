@@ -77,10 +77,10 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
       <div className="flex flex-col items-center relative z-10">
         {/* Counter */}
         <div className="flex items-baseline mb-4">
-          <span className="text-8xl font-albert-light text-black tabular-nums">
+          <span className="text-8xl font-albert-light text-[#1d1d1f] tabular-nums">
             {Math.round(count)}
           </span>
-          <span className="text-4xl font-albert-semibold text-black ml-1">
+          <span className="text-4xl font-albert-semibold text-[#1d1d1f] ml-1">
             %
           </span>
         </div>
@@ -101,7 +101,7 @@ const LoadingScreen: React.FC<LoadingScreenProps> = ({ onComplete }) => {
         </div>
 
         {/* Loading Text */}
-        <span className="text-sm font-albert-light tracking-[0.5em] text-black animate-pulse">
+        <span className="text-sm font-albert-light tracking-[0.5em] text-[#1d1d1f] animate-pulse">
             l o a d i n g
         </span>
       </div>

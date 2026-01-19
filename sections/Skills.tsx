@@ -167,7 +167,7 @@ const GlassSkillCard: React.FC<{
                         {/* Content */}
                         <div className="relative z-20 p-6 flex flex-col justify-between h-full">
                             <div className="flex justify-between items-end">
-                                <h3 className="text-3xl font-albert-black text-black tracking-tight">{skill.title}</h3>
+                                <h3 className="text-3xl font-albert-black text-[#1d1d1f] tracking-tight">{skill.title}</h3>
                                 <span className="text-3xl font-albert-black opacity-60 group-hover:opacity-100 transition-opacity" style={{ color: skill.color }}>
                                     {skill.percentText}
                                 </span>
@@ -246,7 +246,7 @@ const SoftwareGlassButton: React.FC<{
                     {/* Hover Glow */}
                     <div className="absolute inset-0 opacity-0 group-hover:opacity-20 transition-opacity duration-300" style={{ backgroundColor: sw.color }} />
                     
-                    <span className="font-albert-black text-xl text-black/80 group-hover:text-black transition-colors z-10">
+                    <span className="font-albert-black text-xl text-[#1d1d1f]/80 group-hover:text-[#1d1d1f] transition-colors z-10">
                         {sw.name}
                     </span>
                  </motion.div>

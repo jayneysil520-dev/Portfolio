@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import Magnetic from './Magnetic';
 
@@ -25,7 +25,7 @@ const Marquee: React.FC<MarqueeProps> = ({ text, direction = 'left', className =
         {[...Array(4)].map((_, i) => (
             <div key={i} className="flex items-center mx-8">
                 <Magnetic strength={20}>
-                    <span className="text-8xl md:text-[10rem] font-albert-black text-black tracking-tighter opacity-10 hover:opacity-100 transition-opacity duration-300 cursor-default">
+                    <span className="text-8xl md:text-[10rem] font-albert-black text-[#1d1d1f] tracking-tighter opacity-10 hover:opacity-100 transition-opacity duration-300 cursor-default">
                         {text} <span className="mx-4">•</span>
                     </span>
                 </Magnetic>

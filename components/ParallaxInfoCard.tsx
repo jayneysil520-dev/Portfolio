@@ -76,10 +76,10 @@ const ParallaxInfoCard: React.FC<ParallaxInfoCardProps> = ({ title, percent, des
             />
             
             <div className="flex justify-between items-end mb-2 relative z-20">
-                <h3 className="text-2xl font-albert-black tracking-tight text-black group-hover:text-black/80 transition-colors">
+                <h3 className="text-2xl font-albert-black tracking-tight text-[#1d1d1f] group-hover:text-[#1d1d1f]/80 transition-colors">
                     {title}
                 </h3>
-                <span className="text-xl font-albert-black text-gray-400 group-hover:text-black transition-colors">
+                <span className="text-xl font-albert-black text-gray-400 group-hover:text-[#1d1d1f] transition-colors">
                     {percent}
                 </span>
             </div>

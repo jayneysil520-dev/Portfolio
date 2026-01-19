@@ -157,7 +157,7 @@ const Hero: React.FC = () => {
                                 transition={{ duration: 1.5, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
                                 viewport={{ once: true }}
                              >
-                                <span className="text-black transform -skew-x-6">zhanG minGlei</span>
+                                <span className="text-[#1d1d1f] transform -skew-x-6">zhanG minGlei</span>
                             </motion.div>
 
                             <motion.div 

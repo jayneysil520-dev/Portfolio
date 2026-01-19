@@ -182,10 +182,10 @@ const ProfileTimelineCard: React.FC<{
                         <div className="relative p-8 flex flex-col justify-center h-full z-20">
                             <div className="flex justify-between items-start mb-2">
                                 <div className="flex items-center gap-3">
-                                    <span className="font-albert-black text-3xl text-black/90 group-hover:text-black transition-colors">
+                                    <span className="font-albert-black text-3xl text-[#1d1d1f]/90 group-hover:text-[#1d1d1f] transition-colors">
                                         {item.company}
                                     </span>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-black">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300 text-[#1d1d1f]">
                                         <line x1="5" y1="12" x2="19" y2="12"></line>
                                         <polyline points="12 5 19 12 12 19"></polyline>
                                     </svg>
@@ -308,7 +308,7 @@ const ExperienceModalCard: React.FC<{ selectedExp: any, onClose: () => void }> =
             <div className="relative z-20 p-10 md:p-14">
                 <button 
                     onClick={onClose}
-                    className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-black/5 hover:bg-black/10 transition-colors border border-black/5 backdrop-blur-sm text-black/60"
+                    className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-black/5 hover:bg-black/10 transition-colors border border-black/5 backdrop-blur-sm text-[#1d1d1f]/60"
                 >
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                 </button>
@@ -318,13 +318,13 @@ const ExperienceModalCard: React.FC<{ selectedExp: any, onClose: () => void }> =
                         {selectedExp.company.charAt(0)}
                     </div>
                     <div>
-                        <h2 className="text-3xl font-albert-black text-black">{selectedExp.company}</h2>
+                        <h2 className="text-3xl font-albert-black text-[#1d1d1f]">{selectedExp.company}</h2>
                         <span className="text-gray-500 font-mono">{selectedExp.year}</span>
                     </div>
                 </div>
 
                 <div className="mb-8">
-                    <h3 className="text-xl font-bold text-black mb-2">{selectedExp.role}</h3>
+                    <h3 className="text-xl font-bold text-[#1d1d1f] mb-2">{selectedExp.role}</h3>
                     <p className="text-lg text-gray-800 leading-relaxed font-albert-regular whitespace-pre-line">
                         {selectedExp.desc}
                     </p>
@@ -485,7 +485,7 @@ const NameTilt: React.FC = () => {
             }}
             className="inline-block"
         >
-            <h2 className="text-7xl font-albert-black text-black leading-none mb-4 mix-blend-multiply tracking-tighter transform -skew-x-6 hover:text-black/70 transition-colors duration-300 pointer-events-none">
+            <h2 className="text-7xl font-albert-black text-[#1d1d1f] leading-none mb-4 mix-blend-multiply tracking-tighter transform -skew-x-6 hover:text-[#1d1d1f]/70 transition-colors duration-300 pointer-events-none">
                 zhanG<br/>minGlei
             </h2>
         </motion.div>

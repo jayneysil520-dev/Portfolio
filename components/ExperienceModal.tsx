@@ -78,7 +78,7 @@ const FormattedDescription: React.FC<{ text: string }> = ({ text }) => {
         // parts[i] is the number (e.g. "1."), parts[i+1] is the content
         elements.push(
             <div key={i} className="flex gap-2 mb-2 items-start">
-                <span className="font-bold text-black/60 min-w-[20px]">{parts[i]}</span>
+                <span className="font-bold text-[#1d1d1f]/60 min-w-[20px]">{parts[i]}</span>
                 <span>{parts[i+1]}</span>
             </div>
         );
@@ -256,7 +256,7 @@ const ExperienceModal: React.FC<ExperienceModalProps> = ({ isOpen, onClose }) =>
                         transition={{ delay: 0.5 }}
                         className="mt-8 text-center"
                     >
-                        <h2 className="text-4xl font-albert-black text-black tracking-tight mb-2">zhanG minGlei</h2>
+                        <h2 className="text-4xl font-albert-black text-[#1d1d1f] tracking-tight mb-2">zhanG minGlei</h2>
                         <p className="text-lg font-mono text-gray-500 tracking-widest">1995.05.20</p>
                     </motion.div>
                 </motion.div>
@@ -275,7 +275,7 @@ const ExperienceModal: React.FC<ExperienceModalProps> = ({ isOpen, onClose }) =>
                     >
                          {/* Header */}
                          <div className="p-10 md:p-12 pb-6 border-b border-white/20 flex-shrink-0 bg-white/10 backdrop-blur-md">
-                            <h2 className="text-4xl md:text-5xl font-albert-light text-black tracking-tight">
+                            <h2 className="text-4xl md:text-5xl font-albert-light text-[#1d1d1f] tracking-tight">
                                 EXPERIENCE TIMELINE
                             </h2>
                          </div>
@@ -312,7 +312,7 @@ const ExperienceModal: React.FC<ExperienceModalProps> = ({ isOpen, onClose }) =>
                                             {/* Title and Role Section */}
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-3">
-                                                    <h3 className="text-2xl font-bold text-black">{item.company}</h3>
+                                                    <h3 className="text-2xl font-bold text-[#1d1d1f]">{item.company}</h3>
                                                     {/* Arrow */}
                                                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FF4500" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 transition-all duration-300">
                                                         <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -371,7 +371,7 @@ const ExperienceModal: React.FC<ExperienceModalProps> = ({ isOpen, onClose }) =>
                             {/* Close Button */}
                             <button 
                                 onClick={() => setSelectedItem(null)}
-                                className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-white/50 hover:bg-white transition-colors border border-white/50 text-gray-500 hover:text-black"
+                                className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-white/50 hover:bg-white transition-colors border border-white/50 text-gray-500 hover:text-[#1d1d1f]"
                             >
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                             </button>
@@ -385,7 +385,7 @@ const ExperienceModal: React.FC<ExperienceModalProps> = ({ isOpen, onClose }) =>
                                     <div className="h-px flex-1 bg-gradient-to-r from-gray-200 to-transparent" />
                                 </div>
 
-                                <h2 className="text-4xl md:text-5xl font-albert-black mb-3 text-black tracking-tight">{selectedItem.company}</h2>
+                                <h2 className="text-4xl md:text-5xl font-albert-black mb-3 text-[#1d1d1f] tracking-tight">{selectedItem.company}</h2>
                                 <h3 className="text-2xl text-gray-500 mb-10 font-light font-albert-light">{selectedItem.role}</h3>
 
                                 <div className="prose prose-lg text-gray-600 font-albert-regular mb-12">

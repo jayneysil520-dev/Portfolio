@@ -66,7 +66,7 @@ const SpotlightButton: React.FC<SpotlightButtonProps> = ({ name, fullName, onCli
                 style={{ background: gradientBg }}
             />
 
-            <span className="text-3xl font-albert-black text-black z-20 group-hover:scale-110 transition-transform">{name}</span>
+            <span className="text-3xl font-albert-black text-[#1d1d1f] z-20 group-hover:scale-110 transition-transform">{name}</span>
             <span className="text-[10px] font-bold text-gray-500 mt-1 z-20 opacity-0 group-hover:opacity-100 transition-opacity translate-y-2 group-hover:translate-y-0">{fullName}</span>
         </div>
     </motion.div>

@@ -105,8 +105,8 @@ const projects = [
   },
   { 
       id: 7, 
-      title: '3D设计长廊', 
-      label: 'Interactive Gallery', 
+      title: 'aboUt mysElf', 
+      label: 'Deep Gallery', 
       year: '2021-2025', 
       color: '#4ECDC4', 
       img: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000&auto=format&fit=crop', 
@@ -390,11 +390,11 @@ const RightPreviewCard: React.FC<{
 
                     <div className="relative z-10 flex flex-col h-full justify-center p-10">
                         <div className="flex items-center gap-4 mb-4 group-hover:translate-x-2 transition-transform duration-500">
-                            <h2 className="text-5xl font-albert-black text-black tracking-tight drop-shadow-sm">
+                            <h2 className="text-5xl font-albert-black text-[#1d1d1f] tracking-tight drop-shadow-sm">
                                 {project.title}
                             </h2>
                             <div className="opacity-0 group-hover:opacity-100 -translate-x-4 group-hover:translate-x-0 transition-all duration-500">
-                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-black">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="text-[#1d1d1f]">
                                     <path d="M5 12h14M12 5l7 7-7 7" />
                                 </svg>
                             </div>
@@ -729,14 +729,14 @@ const VinylProjects: React.FC = () => {
     // Also added overflow-hidden to container below.
     // 🟢 [配置区域] 您可以在这里调整每张卡片的 scale (缩放大小)
     const cardPositions = useMemo(() => [
-        { top: '-30%', left: '10%',  rotate: -15, zIndex: 1, scale: 1.0 }, // Card 1
-        { top: '0%',  left: '30%', rotate: 12,  zIndex: 2, scale: 1.0 }, // Card 2
-        { top: '17%',  left: '2%',  rotate: 5,   zIndex: 3, scale: 1.0 }, // Card 3
-        { top: '48%',  left: '25%', rotate: -8,  zIndex: 4, scale: 1.0 }, // Card 4
-        { top: '80%',  left: '12%',  rotate: 20,  zIndex: 5, scale: 1.0 }, // Card 5
-        { top: '106%', left: '32%', rotate: -18, zIndex: 6, scale: 1.0 }, // Card 6
-        { top: '135%', left: '10%', rotate: 8,   zIndex: 7, scale: 1.0 }, // Card 7
-        { top: '168%', left: '28%', rotate: -5,  zIndex: 8, scale: 1.0 }, // Card 8
+        { top: '-26%', left: '10%',  rotate: -15, zIndex: 1, scale: 1.0 }, // Card 1
+        { top: '20%',  left: '30%', rotate: 12,  zIndex: 2, scale: 1.0 }, // Card 2
+        { top: '37%',  left: '8%',  rotate: 5,   zIndex: 3, scale: 1.0 }, // Card 3
+        { top: '62%',  left: '25%', rotate: -9,  zIndex: 4, scale: 1.0 }, // Card 4
+        { top: '92%',  left: '2%',  rotate: 20,  zIndex: 5, scale: 1.0 }, // Card 5
+        { top: '117%', left: '32%', rotate: -26, zIndex: 6, scale: 1.0 }, // Card 6
+        { top: '155%', left: '28%', rotate: -6,   zIndex: 7, scale: 1.03 }, // Card 7
+        { top: '190%', left: '8%', rotate: 8,  zIndex: 8, scale: 1.06 }, // Card 8
     ], []);
 
     return (
@@ -859,7 +859,7 @@ const VinylProjects: React.FC = () => {
                                     className={`absolute top-8 right-8 z-[60] w-12 h-12 flex items-center justify-center rounded-full transition-colors border shadow-lg group ${
                                         selectedProject.layout === 'gallery'
                                             ? 'bg-white/10 hover:bg-white/20 border-white/20 text-white'
-                                            : 'bg-white/90 hover:bg-white border-gray-200 text-black'
+                                            : 'bg-white/90 hover:bg-white border-gray-200 text-[#1d1d1f]'
                                     }`}
                                 >
                                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="group-hover:rotate-90 transition-transform duration-300"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
@@ -887,9 +887,9 @@ const VinylProjects: React.FC = () => {
                                             <div className="relative z-10 -mt-32 px-4 md:px-12 pb-12">
                                                 <div className="mx-auto max-w-7xl bg-white border border-gray-100 shadow-[0_20px_60px_rgba(0,0,0,0.05)] rounded-[2.5rem] p-8 md:p-14 overflow-hidden relative">
                                                     <div className="mb-12 relative z-10">
-                                                        <h1 className="text-4xl md:text-7xl font-albert-black text-black tracking-tight mb-4">{selectedProject.title}</h1>
+                                                        <h1 className="text-4xl md:text-7xl font-albert-black text-[#1d1d1f] tracking-tight mb-4">{selectedProject.title}</h1>
                                                         <div className="flex items-center gap-4 text-sm font-bold tracking-widest text-gray-500 uppercase">
-                                                            <span className="px-3 py-1 bg-black text-white rounded-full">{selectedProject.year}</span>
+                                                            <span className="px-3 py-1 bg-[#1d1d1f] text-white rounded-full">{selectedProject.year}</span>
                                                             <span>{selectedProject.client || 'Client'}</span>
                                                             <span className="w-1 h-1 bg-gray-400 rounded-full" />
                                                             <span>{selectedProject.label}</span>

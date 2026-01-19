@@ -48,7 +48,7 @@ const ScrollToTop: React.FC = () => {
           }}
           onClick={scrollToTop}
           // iOS 16 Glass Style: High blur, translucent white, subtle border
-          className="fixed bottom-10 right-10 z-[100] w-16 h-16 flex items-center justify-center rounded-full bg-white/30 backdrop-blur-2xl border border-white/40 text-black/80 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] overflow-hidden cursor-pointer"
+          className="fixed bottom-10 right-10 z-[100] w-16 h-16 flex items-center justify-center rounded-full bg-white/30 backdrop-blur-2xl border border-white/40 text-[#1d1d1f]/80 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] overflow-hidden cursor-pointer"
           style={{
               WebkitBackdropFilter: "blur(24px)" // Safari support for intense blur
           }}
@@ -66,7 +66,7 @@ const ScrollToTop: React.FC = () => {
             strokeWidth="2.5" 
             strokeLinecap="round" 
             strokeLinejoin="round" 
-            className="relative z-10 text-black/70"
+            className="relative z-10 text-[#1d1d1f]/70"
           >
             <path d="M18 15l-6-6-6 6"/>
           </svg>
