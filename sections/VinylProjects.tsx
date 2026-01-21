@@ -10,7 +10,8 @@ import Interactive3DGallery from '../components/Interactive3DGallery';
 // 修改此数值即可统一调整所有 Project 卡片的大小 (0.8 = 缩小, 1.0 = 默认, 1.2 = 放大)
 const CARDS_GLOBAL_SCALE = 1.1;
 
-const PROJECT_1_LONG_IMAGE = 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E6%89%80%E6%9C%89IP%E7%9A%84%E4%BD%8D%E7%BD%AE1-11.png';
+// 🟢 修复：将 GitHub Raw 链接替换为国内镜像链接 (jsd.cdn.zzko.cn)，解决加载慢/无法加载的问题
+const PROJECT_1_LONG_IMAGE = 'https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/%E6%89%80%E6%9C%89IP%E7%9A%84%E4%BD%8D%E7%BD%AE1-11.png';
 const PROJECT_1_LONG_IMAGE_2 = 'https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/%E6%88%91%E7%9A%84%E4%BD%8D%E7%BD%AE1-11.png';
 const PROJECT_2_LONG_IMAGE = 'https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/%E5%BE%97%E5%8A%9B%E8%9B%8B%E4%BB%94%E9%95%BF%E5%9B%BE1-11.png';
 
@@ -23,7 +24,7 @@ const TOOL_ICONS: Record<string, string> = {
     'Blender': 'https://jsd.cdn.zzko.cn/gh/devicons/devicon/icons/blender/blender-original.svg',
     'C4D': 'https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/1197px-C4D_Logo.png',
     'React': 'https://jsd.cdn.zzko.cn/gh/devicons/devicon/icons/react/react-original.svg',
-    'ThreeJS': 'https://global.discourse-cdn.com/standard17/uploads/threejs/original/2X/e/e4f86d2200d2d35c30f7b1494e96b9595ebc2751.png', 
+    'ThreeJS': 'https://jsd.cdn.zzko.cn/gh/devicons/devicon/icons/threejs/threejs-original.svg', // Updated to China Mirror
     'Jimeng': 'https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/%E5%8D%B3%E6%A2%A6icon.png',
     'Pinterest': 'https://jsd.cdn.zzko.cn/gh/devicons/devicon/icons/pinterest/pinterest-original.svg',
     'LibLib': 'https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/LibLib.png'

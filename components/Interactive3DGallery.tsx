@@ -5,7 +5,7 @@ import * as THREE from 'three';
 
 // --- CRITICAL FIX: MANUALLY DECLARE R3F TYPES TO PREVENT ERRORS ---
 // We keep this just in case, though installing the packages usually solves it.
-declare module 'react' {
+declare global {
   namespace JSX {
     interface IntrinsicElements {
       group: any;
