@@ -36,7 +36,7 @@ const heroCards = [
       rotate: 10, 
       scale: 1.18,
       // 🟢 修复：将 GitHub Raw 链接替换为国内镜像链接
-      img: 'https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/%E5%8D%AB%E5%B2%97%E5%B0%81%E9%9D%A2hero.jpg'
+      img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E5%8D%AB%E5%B2%97/%E5%B0%81%E9%9D%A2%E5%9B%BE.png'
   }, 
   { id: 5, color: '#FFCCAA', rotate: 5, scale: 1.1 }, 
 ];

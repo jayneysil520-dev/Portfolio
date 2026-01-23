@@ -3,26 +3,14 @@ import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { useGLTF, ScrollControls, Scroll, useScroll, Html, ContactShadows, Environment, Float } from '@react-three/drei';
 import * as THREE from 'three';
 
-// --- CRITICAL FIX: MANUALLY DECLARE R3F TYPES TO PREVENT ERRORS ---
-// We keep this just in case, though installing the packages usually solves it.
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      group: any;
-      mesh: any;
-      torusKnotGeometry: any;
-      meshStandardMaterial: any;
-      sphereGeometry: any;
-      boxGeometry: any;
-      ambientLight: any;
-      spotLight: any;
-      pointLight: any;
-      primitive: any; // Important for useGLTF
-      // Catch-all to prevent other missing element errors
-      [elemName: string]: any;
-    }
-  }
-}
+// --- BYPASS TYPESCRIPT INTRINSIC ELEMENTS CHECK ---
+// Define these as constants cast to 'any' to avoid "Property does not exist on type JSX.IntrinsicElements"
+const Mesh = 'mesh' as any;
+const TorusKnotGeometry = 'torusKnotGeometry' as any;
+const MeshStandardMaterial = 'meshStandardMaterial' as any;
+const AmbientLight = 'ambientLight' as any;
+const SpotLight = 'spotLight' as any;
+const PointLight = 'pointLight' as any;
 
 // --- ROTATING MODEL COMPONENT ---
 // This component rotates and moves based on scroll
@@ -50,17 +38,17 @@ const ScrollBasedModel: React.FC = () => {
 
   return (
     <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
-        <mesh ref={meshRef} position={[0, 0, 0]} scale={1.2}>
+        <Mesh ref={meshRef} position={[0, 0, 0]} scale={1.2}>
             {/* Using a TorusKnot as a placeholder for a complex 3D object */}
-            <torusKnotGeometry args={[1, 0.35, 128, 32]} />
+            <TorusKnotGeometry args={[1, 0.35, 128, 32]} />
             {/* Shiny, colorful material */}
-            <meshStandardMaterial 
+            <MeshStandardMaterial 
                 color="#4ECDC4" 
                 roughness={0.1} 
                 metalness={0.6}
                 emissive="#000000"
             />
-        </mesh>
+        </Mesh>
     </Float>
   );
 };
@@ -69,9 +57,9 @@ const ScrollBasedModel: React.FC = () => {
 const Scene: React.FC = () => {
   return (
     <>
-      <ambientLight intensity={0.5} />
-      <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
-      <pointLight position={[-10, -10, -10]} intensity={1} color="#ff0000" />
+      <AmbientLight intensity={0.5} />
+      <SpotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
+      <PointLight position={[-10, -10, -10]} intensity={1} color="#ff0000" />
       
       <Environment preset="city" />
 
