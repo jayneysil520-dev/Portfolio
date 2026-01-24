@@ -49,7 +49,7 @@ const PREVIEW_LAYOUT_CONFIG = {
 
 // --- ASSETS ---
 const P1_IMG_1 = 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E6%89%80%E6%9C%89IP%E7%9A%84%E4%BD%8D%E7%BD%AE1-11.png';
-const P1_IMG_2 = 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8D%A1%E7%89%87%E7%AC%AC%E4%BA%8C%E9%95%BF%E5%9B%BE%E6%9C%89%E5%8A%A8%E6%95%88.png';
+const P1_IMG_2 = 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8D%A1%E7%89%87%E7%AC%AC%E4%BA%8C%E9%95%BF%E5%9B%BE%E6%9C%80%E5%90%8E%E4%B8%80%E7%89%88.png';
 const P1_IMG_3 = 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E7%AC%AC%E4%B8%80%E4%B8%AA%E5%8D%A1%E7%89%87%E7%AC%AC%E5%9B%9B%E9%95%BF%E5%9B%BE.png';
 const P1_VID_1 = "https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%93%85%E7%AC%94%E7%9A%84%E8%A7%86%E9%A2%91.mp4";
 const P1_VID_2 = "https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E6%89%8B%E8%87%82%E8%A7%86%E9%A2%91.mp4";
@@ -262,42 +262,69 @@ const InteractivePhotoCard: React.FC<InteractivePhotoCardProps> = ({
     );
 }
 
+// 🟢 NEW CONFIG INTERFACE FOR FREE ARRANGEMENT
+interface WaveItemConfig {
+    url: string;
+    x: number;      // Horizontal offset (relative to group origin)
+    y: number;      // Vertical offset (relative to group origin)
+    width: number;  // Width in design px
+    rotate?: number;
+    zIndex?: number;
+    delay?: number;
+}
+
+// 🟢 REFACTORED WAVE IMAGE GROUP (Supports Free Layout)
 const WaveImageGroup: React.FC<{
-    x: number;
-    y: number;
-    images: string[];
+    groupX: number;
+    groupY: number;
+    items: WaveItemConfig[];
     mediaOffsetVh: number;
     designWidth?: number;
     modalWidthVw?: number;
-}> = ({ x, y, images, mediaOffsetVh, designWidth = 1920, modalWidthVw = 57 }) => {
+}> = ({ groupX, groupY, items, mediaOffsetVh, designWidth = 1920, modalWidthVw = 57 }) => {
     const getSize = (px: number) => (px / designWidth) * modalWidthVw; 
     const getLeft = (px: number) => (px / designWidth) * 100; 
 
     return (
-        <div 
-            style={{ 
-                position: 'absolute', 
-                left: `${getLeft(x)}%`, 
-                top: `calc(${getSize(y)}vw + ${mediaOffsetVh}vh)`,
-                zIndex: 35,
-                display: 'flex',
-                gap: '2vw',
-                pointerEvents: 'none'
-            }}
-        >
-            {images.map((url, idx) => (
-                <motion.div
-                    key={idx}
-                    initial={{ y: 100, opacity: 0 }}
-                    whileInView={{ y: 0, opacity: 1 }}
-                    transition={{ delay: idx * 0.2, duration: 1, type: "spring", bounce: 0.4 }}
-                    viewport={{ once: true, margin: "-10%" }}
-                    className="relative"
-                >
-                    <img src={url} alt={`Wave ${idx}`} style={{ width: 'auto', height: 'auto', maxWidth: '25vw' }} />
-                </motion.div>
-            ))}
-        </div>
+        <>
+            {items.map((item, idx) => {
+                const absoluteX = groupX + item.x;
+                const absoluteY = groupY + item.y;
+                return (
+                    <motion.div
+                        key={idx}
+                        style={{ 
+                            position: 'absolute', 
+                            left: `${getLeft(absoluteX)}%`, 
+                            top: `calc(${getSize(absoluteY)}vw + ${mediaOffsetVh}vh)`,
+                            width: `${getSize(item.width)}vw`,
+                            zIndex: 35 + (item.zIndex || 0),
+                            pointerEvents: 'none'
+                        }}
+                        initial={{ y: 150, opacity: 0, rotate: (item.rotate || 0) + 15 }}
+                        whileInView={{ y: 0, opacity: 1, rotate: item.rotate || 0 }}
+                        transition={{ 
+                            delay: item.delay || (idx * 0.15), 
+                            duration: 1.2, 
+                            type: "spring", 
+                            bounce: 0.3 
+                        }}
+                        viewport={{ once: true, margin: "0px" }}
+                    >
+                        <img 
+                            src={item.url} 
+                            alt={`Wave ${idx}`} 
+                            style={{ 
+                                width: '100%', 
+                                height: 'auto', 
+                                display: 'block',
+                                filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.3))' // Add depth
+                            }} 
+                        />
+                    </motion.div>
+                );
+            })}
+        </>
     );
 }
 
@@ -753,11 +780,39 @@ const GalleryModalView: React.FC<{ images: string[], project: any }> = ({ images
     const textConfig = project.detailText;
     const mediaHeight1 = hasSeq1 ? VIDEO_1_SCROLL_HEIGHT_VH : (hasVideo1 ? VIDEO_1_SCROLL_HEIGHT_VH : 0);
     const mediaHeight2 = 0; 
-    const waveImages = [
-        'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/down.png',
-        'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/midle.png',
-        'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/up.png'
+
+    // 🟢 自由布局配置区域 (Free Layout Configuration)
+    // 修改这里的 x, y, rotate, width 即可自由控制这三张图片的位置
+    const waveImagesConfig: WaveItemConfig[] = [
+        { 
+            url: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/down.png',
+            x: -260,    // 相对 x=465 的偏移
+            y: 8000,    // 相对 y=8322 的偏移
+            width: 1500,
+            rotate: 0,
+            zIndex: 3,
+            delay: 0.1
+        },
+        { 
+            url: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/midle.png',
+            x: -260,  
+            y: 7800,   // 向上错位
+            width: 1500,
+            rotate: 0,
+            zIndex: 2,
+            delay: 0.2
+        },
+        { 
+            url: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/up.png',
+            x: -260,  
+            y: 7600,    // 向下错位
+            width: 1500,
+            rotate: 0,
+            zIndex: 1,
+            delay: 0.3
+        }
     ];
+
     const group1Cards = [
         { id: 1, xOffset: -250,   yOffset: 7600, width: 360, height: 208, rotate: 0, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/1.png' },
         { id: 2, xOffset: 125, yOffset: 7600, width: 360, height: 125, rotate: 0, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/2.png' },
@@ -838,7 +893,10 @@ const GalleryModalView: React.FC<{ images: string[], project: any }> = ({ images
                                 {group1Cards.map((card, idx) => (
                                     <InteractivePhotoCard key={`g1-${card.id}`} x={465 + card.xOffset} y={7745 + card.yOffset} width={card.width} height={card.height} rotate={card.rotate} imgUrl={card.img} delay={idx * 0.1} mediaOffsetVh={mediaHeight1 + mediaHeight2} modalWidthVw={MODAL_WIDTH_VW} />
                                 ))}
-                                <WaveImageGroup x={465} y={8322} images={waveImages} mediaOffsetVh={mediaHeight1 + mediaHeight2} modalWidthVw={MODAL_WIDTH_VW} />
+                                
+                                {/* 🟢 Replaced old component with new configurable one */}
+                                <WaveImageGroup groupX={465} groupY={8322} items={waveImagesConfig} mediaOffsetVh={mediaHeight1 + mediaHeight2} modalWidthVw={MODAL_WIDTH_VW} />
+                                
                                 {group3Cards.map((card, idx) => (
                                     <InteractivePhotoCard key={`g3-${card.id}`} x={465 + card.xOffset} y={9355 + card.yOffset} width={card.width} height={card.height} rotate={card.rotate} imgUrl={card.img} delay={idx * 0.1} mediaOffsetVh={mediaHeight1 + mediaHeight2} modalWidthVw={MODAL_WIDTH_VW} />
                                 ))}
