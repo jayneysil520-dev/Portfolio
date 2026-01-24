@@ -190,11 +190,12 @@ interface InteractivePhotoCardProps {
     mediaOffsetVh: number;
     designWidth?: number;
     modalWidthVw?: number;
+    borderRadius?: string; // 🟢 Added borderRadius prop
 }
 
 const InteractivePhotoCard: React.FC<InteractivePhotoCardProps> = ({ 
     x, y, width, height, rotate, imgUrl, delay = 0, mediaOffsetVh, 
-    designWidth = 1920, modalWidthVw = 57
+    designWidth = 1920, modalWidthVw = 57, borderRadius = "16px" // Default value
 }) => {
     const getPos = (px: number) => (px / designWidth) * 100; // %
     const getSize = (px: number) => (px / designWidth) * modalWidthVw; // vw
@@ -244,7 +245,10 @@ const InteractivePhotoCard: React.FC<InteractivePhotoCardProps> = ({
                 style={{ rotateX, rotateY, rotateZ: rotate, transformStyle: "preserve-3d" }}
                 whileHover={{ scale: 1.05, z: 20 }}
              >
-                <div className="w-full h-full rounded-2xl overflow-hidden bg-gray-200 shadow-xl relative transform-style-3d border border-white/20">
+                <div 
+                    className="w-full h-full overflow-hidden bg-gray-200 shadow-xl relative transform-style-3d border border-white/20"
+                    style={{ borderRadius: borderRadius }}
+                >
                      {imgUrl ? (
                         <img 
                             src={imgUrl} 
@@ -255,7 +259,7 @@ const InteractivePhotoCard: React.FC<InteractivePhotoCardProps> = ({
                         <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500 font-mono text-xs">IMG</div>
                      )}
                      <div className="absolute inset-0 bg-gradient-to-tr from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none mix-blend-overlay" />
-                     <div className="absolute inset-0 border border-black/5 rounded-2xl pointer-events-none" />
+                     <div className="absolute inset-0 border border-black/5 pointer-events-none" style={{ borderRadius: borderRadius }} />
                 </div>
              </motion.div>
         </motion.div>
@@ -787,8 +791,8 @@ const GalleryModalView: React.FC<{ images: string[], project: any }> = ({ images
         { 
             url: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/down.png',
             x: -260,    // 相对 x=465 的偏移
-            y: 8000,    // 相对 y=8322 的偏移
-            width: 1500,
+            y: 8430,    // 相对 y=8322 的偏移
+            width: 1530,
             rotate: 0,
             zIndex: 3,
             delay: 0.1
@@ -796,8 +800,8 @@ const GalleryModalView: React.FC<{ images: string[], project: any }> = ({ images
         { 
             url: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/midle.png',
             x: -260,  
-            y: 7800,   // 向上错位
-            width: 1500,
+            y: 8104,   // 向上错位
+            width: 1530,
             rotate: 0,
             zIndex: 2,
             delay: 0.2
@@ -805,25 +809,40 @@ const GalleryModalView: React.FC<{ images: string[], project: any }> = ({ images
         { 
             url: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/up.png',
             x: -260,  
-            y: 7600,    // 向下错位
-            width: 1500,
+            y: 7910,    // 向下错位
+            width: 1530,
             rotate: 0,
             zIndex: 1,
             delay: 0.3
         }
     ];
 
-    const group1Cards = [
-        { id: 1, xOffset: -250,   yOffset: 7600, width: 360, height: 208, rotate: 0, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/1.png' },
-        { id: 2, xOffset: 125, yOffset: 7600, width: 360, height: 125, rotate: 0, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/2.png' },
-        { id: 3, xOffset: 500, yOffset: 7600, width: 360, height: 172, rotate: 0, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/3.png' },
-        { id: 4, xOffset: 875, yOffset: 7600, width: 360, height: 208, rotate: 0, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/4.png' }
+    // 🟢 新增：自定义插图配置 (Fox and Rabbit) - 专门用于您的新图片
+    // 您可以修改这里的 x, y, width, rotate 来调整位置和大小
+    const customFoxRabbitConfig: WaveItemConfig[] = [
+        {
+            url: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/%E7%8B%90%E7%8B%B8%E5%92%8C%E5%85%94%E5%AD%90.png',
+            x: 250,      // 绝对 X 坐标
+            y: 16200,     // 绝对 Y 坐标
+            width: 1450,  // 图片宽度 (您可以根据需要修改这个值，比如 300 或 600)
+            rotate: 0,   // 旋转角度
+            zIndex: 30   // 层级
+        }
     ];
+
+    // 🟢 Modified: Added borderRadius parameter (default: '16px')
+    const group1Cards = [
+        { id: 1, xOffset: -250,   yOffset: 7600, width: 360, height: 208, rotate: 0, borderRadius: '32px', img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/1.png' },
+        { id: 2, xOffset: 125, yOffset: 7600, width: 360, height: 125, rotate: 0, borderRadius: '32px', img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/2.png' },
+        { id: 3, xOffset: 500, yOffset: 7600, width: 360, height: 172, rotate: 0, borderRadius: '32px', img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/3.png' },
+        { id: 4, xOffset: 875, yOffset: 7600, width: 360, height: 208, rotate: 0, borderRadius: '32px', img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/4.png' }
+    ];
+    // 🟢 Modified: Added borderRadius parameter (default: '16px')
     const group3Cards = [
-        { id: 1, xOffset: 0,   yOffset: 9000, width: 368, height: 512, rotate: 5, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/d1.png' },
-        { id: 2, xOffset: 320, yOffset: 9050, width: 368, height: 512, rotate: -4, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/d2.png' },
-        { id: 3, xOffset: 640, yOffset: 9020, width: 368, height: 512, rotate: 3, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/d3.png' },
-        { id: 4, xOffset: 960, yOffset: 9060, width: 368, height: 512, rotate: -6, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/d4.png' }
+        { id: 1, xOffset: 0,   yOffset: 9000, width: 368, height: 512, rotate: 5, borderRadius: '32px', img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/d1.png' },
+        { id: 2, xOffset: 320, yOffset: 9050, width: 368, height: 512, rotate: -4, borderRadius: '32px', img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/d2.png' },
+        { id: 3, xOffset: 640, yOffset: 9020, width: 368, height: 512, rotate: 3, borderRadius: '32px', img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/d3.png' },
+        { id: 4, xOffset: 960, yOffset: 9060, width: 368, height: 512, rotate: -6, borderRadius: '32px', img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/d4.png' }
     ];
 
     return (
@@ -891,14 +910,41 @@ const GalleryModalView: React.FC<{ images: string[], project: any }> = ({ images
                                     </React.Fragment>
                                 ))}
                                 {group1Cards.map((card, idx) => (
-                                    <InteractivePhotoCard key={`g1-${card.id}`} x={465 + card.xOffset} y={7745 + card.yOffset} width={card.width} height={card.height} rotate={card.rotate} imgUrl={card.img} delay={idx * 0.1} mediaOffsetVh={mediaHeight1 + mediaHeight2} modalWidthVw={MODAL_WIDTH_VW} />
+                                    <InteractivePhotoCard 
+                                        key={`g1-${card.id}`} 
+                                        x={465 + card.xOffset} 
+                                        y={7745 + card.yOffset} 
+                                        width={card.width} 
+                                        height={card.height} 
+                                        rotate={card.rotate} 
+                                        imgUrl={card.img} 
+                                        delay={idx * 0.1} 
+                                        mediaOffsetVh={mediaHeight1 + mediaHeight2} 
+                                        modalWidthVw={MODAL_WIDTH_VW} 
+                                        borderRadius={card.borderRadius} // 🟢 Added
+                                    />
                                 ))}
                                 
                                 {/* 🟢 Replaced old component with new configurable one */}
                                 <WaveImageGroup groupX={465} groupY={8322} items={waveImagesConfig} mediaOffsetVh={mediaHeight1 + mediaHeight2} modalWidthVw={MODAL_WIDTH_VW} />
                                 
+                                {/* 🟢 新增：渲染自定义插图 (Fox & Rabbit) */}
+                                <WaveImageGroup groupX={0} groupY={0} items={customFoxRabbitConfig} mediaOffsetVh={mediaHeight1 + mediaHeight2} modalWidthVw={MODAL_WIDTH_VW} />
+
                                 {group3Cards.map((card, idx) => (
-                                    <InteractivePhotoCard key={`g3-${card.id}`} x={465 + card.xOffset} y={9355 + card.yOffset} width={card.width} height={card.height} rotate={card.rotate} imgUrl={card.img} delay={idx * 0.1} mediaOffsetVh={mediaHeight1 + mediaHeight2} modalWidthVw={MODAL_WIDTH_VW} />
+                                    <InteractivePhotoCard 
+                                        key={`g3-${card.id}`} 
+                                        x={465 + card.xOffset} 
+                                        y={9355 + card.yOffset} 
+                                        width={card.width} 
+                                        height={card.height} 
+                                        rotate={card.rotate} 
+                                        imgUrl={card.img} 
+                                        delay={idx * 0.1} 
+                                        mediaOffsetVh={mediaHeight1 + mediaHeight2} 
+                                        modalWidthVw={MODAL_WIDTH_VW} 
+                                        borderRadius={card.borderRadius} // 🟢 Added
+                                    />
                                 ))}
                             </>
                         )}
