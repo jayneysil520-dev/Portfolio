@@ -1,15 +1,51 @@
-import React, { useState, useRef, useMemo, useEffect } from 'react';
+import React, { useState, useRef, useMemo, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence, useTransform, useMotionValue, useSpring, useScroll, useMotionTemplate, Variants } from 'framer-motion';
 import { createPortal } from 'react-dom'; 
 import Spotlight3D from '../components/Spotlight3D';
 import Interactive3DGallery from '../components/Interactive3DGallery';
 
-// --- CONFIGURATION ---
+// --- CONFIGURATION / 配置区域 ---
 
 const CARDS_GLOBAL_SCALE = 1.1;
-// 🟢 [UPDATED] Reduced scroll height to tighten the gap sensation (less scroll distance required)
 const VIDEO_1_SCROLL_HEIGHT_VH = 110; 
 const VIDEO_2_SCROLL_HEIGHT_VH = 110;
+
+/**
+ * 🟢 PREVIEW_LAYOUT_CONFIG
+ * 控制右侧悬浮预览卡片（大图）和软件图标（小卡片）的布局与样式。
+ * 修改这里的数值可直接改变大小、位置和文字排版。
+ */
+const PREVIEW_LAYOUT_CONFIG = {
+    // 1. 右侧大卡片设置 (Photo Card)
+    card: {
+        width: '1000px',        // 宽度 (建议 600px - 900px)
+        height: '360px',       // 高度 (建议 300px - 450px)
+        top: '15%',            // 垂直位置 (距离顶部百分比)
+        right: '-13%',          // 水平位置 (距离右侧百分比)
+        padding: 'p-16',       // 内部边距
+        borderRadius: 'rounded-[4rem]', // 圆角大小
+    },
+
+    // 2. 漂浮软件图标设置 (Floating Icons)
+    icons: {
+        sizeClass: 'w-32 h-32', // 图标尺寸 (w-14: 56px, w-16: 64px, w-20: 80px)
+        startX: 350,           // 起始 X 坐标 (相对于大卡片左上角)
+        startY: 320,           // 起始 Y 坐标 (相对于大卡片左上角)
+        gapX: 150,              // 图标水平间距
+        gapY: 5,              // 图标垂直间距
+        randomness: 50,        // 随机偏移范围 (0 为整齐排列)
+    },
+
+    // 3. 文字排版设置 (Typography)
+    text: {
+        titleSize: 'text-6xl',      // 标题字号 (text-4xl, text-5xl, text-6xl)
+        titleGap: 'mb-3',           // 标题底部间距 (mb-2, mb-3, mb-4)
+        labelSize: 'text-xl',       // 类型标签字号
+        descSize: 'text-lg',        // 描述文字字号 (text-base, text-lg, text-xl)
+        descLineClamp: 'line-clamp-3', // 描述最大行数 (line-clamp-2, line-clamp-3)
+        dateStyle: 'text-lg font-mono', // 日期/年份字体样式
+    }
+};
 
 // --- ASSETS ---
 const P1_IMG_1 = 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E6%89%80%E6%9C%89IP%E7%9A%84%E4%BD%8D%E7%BD%AE1-11.png';
@@ -34,18 +70,19 @@ const TOOL_ICONS: Record<string, string> = {
     'LibLib': 'https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/LibLib.png'
 };
 
-// --- DATA ---
+// --- DATA / 项目数据 ---
+// 🟢 请在此处管理您的项目内容
 const projects = [
   { 
       id: 1, 
       title: '得力欧美市场IP形象设计', 
       label: 'IP IMAGE DESIGN', 
-      year: '2025', 
+      year: '2025.01 - 2025.03', 
       client: 'DELI', 
       color: '#FF7F27', 
       img: 'https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/1-1.png', 
       desc: 'Creating a magical land named "Heart Language Forest" for Deli\'s European and American markets.',
-      tools: ['Jimeng', 'PS', 'Figma', 'Blender'],
+      tools: ['Jimeng', 'PS', 'Figma', 'Blender', 'LibLib'],
       layout: 'gallery', 
       
       scrollVideoUrl: P1_VID_1,
@@ -74,11 +111,11 @@ const projects = [
       id: 2, 
       title: '蛋仔派对·得力创作大赛视觉设计', 
       label: 'VISUAL DESIGN', 
-      year: '2025', 
+      year: '2025.02', 
       color: '#FFA500', 
       img: 'https://jsd.cdn.zzko.cn/gh/jayneysil520-dev/jayneysil@main/2-1.png', 
       desc: '得力在手，蛋仔脑洞全开',
-      tools: ['Figma', 'Jimeng', 'PS', 'Blender'],
+      tools: ['Figma', 'Jimeng', 'PS', 'Blender', 'LibLib'],
       layout: 'gallery',
       detailImages: [PROJECT_2_LONG_IMAGE],
   },
@@ -93,23 +130,36 @@ const projects = [
       detailText: { main: 'Yuan', sub: '运营设计 OPERATION DESIGN', signature: 'Tutor' }
   },
   { 
-      id: 4, title: '卫岗形象设计之LoRA炼制', label: 'LOGO / IP DESIGN', year: '2022', color: '#EA2F2F', 
-      img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E5%8D%B3%E6%A2%A6icon.png', 
+      id: 4, 
+      title: '卫岗形象设计之LoRA炼制', 
+      label: 'LOGO / IP DESIGN', 
+      year: '2022', 
+      color: '#EA2F2F', 
+      img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E5%8D%AB%E5%B2%97/%E5%B0%81%E9%9D%A2%E5%9B%BE.png', 
       desc: 'Rhythm of city life captured in a rhythmic event discovery application.',
-      tools: ['Figma', 'LibLib', 'PS']
+      tools: ['Figma', 'LibLib', 'PS', 'AI']
   },
   { 
-      id: 5, title: 'Nature Sync', label: 'IOT INTERFACE', year: '2021', color: '#66DD88', 
+      id: 5, 
+      title: '哪吒书立及腰封设计', 
+      label: 'IOT INTERFACE', 
+      year: '2025', 
+      color: '#66DD88', 
       img: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1000&auto=format&fit=crop', 
       desc: 'Smart home interface connecting organic patterns with digital control.',
-      tools: ['Figma', 'C4D']
+      tools: ['AI', 'Figma']
   },
   { 
-      id: 6, title: 'Abstract Void', label: 'MOTION ART', year: '2021', color: '#AA88EE', 
+      id: 6, 
+      title: '个人视频部分', 
+      label: 'MOTION ART', 
+      year: '2021-2025', 
+      color: '#AA88EE', 
       img: 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&auto=format&fit=crop', 
       desc: 'Experimental motion graphics exploring the concept of digital minimalism.',
-      tools: ['C4D', 'AE', 'PS']
+      tools: ['C4D', 'AE', 'Blender']
   },
+
   { 
       id: 7, title: 'aboUt mysElf', label: 'Deep Gallery', year: '2021-2025', color: '#4ECDC4', 
       img: 'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?q=80&w=1000&auto=format&fit=crop', 
@@ -121,7 +171,7 @@ const projects = [
       id: 8, title: '自媒体设计能力沉淀', label: 'Personal Growth', year: '2021-2026', color: '#FF0055', 
       img: 'https://images.unsplash.com/photo-1515405295579-ba7f45403022?q=80&w=1000&auto=format&fit=crop', 
       desc: 'Visualizing sound waves in real-time using WebAudio API and Canvas.',
-      tools: ['ThreeJS', 'Blender']
+      tools: ['Figma', 'PS']
   }
 ];
 
@@ -129,24 +179,22 @@ const DEPTHS = { FLOOR: -300, PROPS: -290, PROJECTS: -50 };
 
 // --- COMPONENTS ---
 
-// 🟢 NEW COMPONENT: Interactive Photo Card (About Me Style)
-// Supports: 3D Tilt, Grayscale -> Color, Gloss Effect
 interface InteractivePhotoCardProps {
     x: number;
     y: number;
     width: number;
     height: number;
     rotate: number;
-    imgUrl?: string; // Optional, can show placeholder
+    imgUrl?: string;
     delay?: number;
-    mediaOffsetVh: number; // To handle sticky video offsets
+    mediaOffsetVh: number;
     designWidth?: number;
     modalWidthVw?: number;
 }
 
 const InteractivePhotoCard: React.FC<InteractivePhotoCardProps> = ({ 
     x, y, width, height, rotate, imgUrl, delay = 0, mediaOffsetVh, 
-    designWidth = 1920, modalWidthVw = 57 // 95 * 0.6
+    designWidth = 1920, modalWidthVw = 57
 }) => {
     const getPos = (px: number) => (px / designWidth) * 100; // %
     const getSize = (px: number) => (px / designWidth) * modalWidthVw; // vw
@@ -206,11 +254,7 @@ const InteractivePhotoCard: React.FC<InteractivePhotoCardProps> = ({
                      ) : (
                         <div className="w-full h-full bg-gray-300 flex items-center justify-center text-gray-500 font-mono text-xs">IMG</div>
                      )}
-                     
-                     {/* Gloss Effect */}
                      <div className="absolute inset-0 bg-gradient-to-tr from-white/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none mix-blend-overlay" />
-                     
-                     {/* Inner Border */}
                      <div className="absolute inset-0 border border-black/5 rounded-2xl pointer-events-none" />
                 </div>
              </motion.div>
@@ -218,8 +262,6 @@ const InteractivePhotoCard: React.FC<InteractivePhotoCardProps> = ({
     );
 }
 
-// 🟢 NEW COMPONENT: Wave Image Group
-// Handles sequential "wave" appearance
 const WaveImageGroup: React.FC<{
     x: number;
     y: number;
@@ -228,8 +270,8 @@ const WaveImageGroup: React.FC<{
     designWidth?: number;
     modalWidthVw?: number;
 }> = ({ x, y, images, mediaOffsetVh, designWidth = 1920, modalWidthVw = 57 }) => {
-    const getSize = (px: number) => (px / designWidth) * modalWidthVw; // vw
-    const getLeft = (px: number) => (px / designWidth) * 100; // %
+    const getSize = (px: number) => (px / designWidth) * modalWidthVw; 
+    const getLeft = (px: number) => (px / designWidth) * 100; 
 
     return (
         <div 
@@ -239,7 +281,7 @@ const WaveImageGroup: React.FC<{
                 top: `calc(${getSize(y)}vw + ${mediaOffsetVh}vh)`,
                 zIndex: 35,
                 display: 'flex',
-                gap: '2vw', // Spacing between wave images
+                gap: '2vw',
                 pointerEvents: 'none'
             }}
         >
@@ -248,13 +290,7 @@ const WaveImageGroup: React.FC<{
                     key={idx}
                     initial={{ y: 100, opacity: 0 }}
                     whileInView={{ y: 0, opacity: 1 }}
-                    // Staggered delay creates the "wave" effect: 0s -> 0.2s -> 0.4s
-                    transition={{ 
-                        delay: idx * 0.2, 
-                        duration: 1, 
-                        type: "spring", 
-                        bounce: 0.4 
-                    }}
+                    transition={{ delay: idx * 0.2, duration: 1, type: "spring", bounce: 0.4 }}
                     viewport={{ once: true, margin: "-10%" }}
                     className="relative"
                 >
@@ -265,7 +301,6 @@ const WaveImageGroup: React.FC<{
     );
 }
 
-// [NEW] APPLE-STYLE IMAGE SEQUENCE PLAYER
 interface SequenceConfig {
     baseUrl: string;
     suffix: string;
@@ -284,70 +319,46 @@ const ImageSequencePlayer: React.FC<{
     const containerRef = useRef<HTMLDivElement>(null);
     const imagesRef = useRef<HTMLImageElement[]>([]);
     const [isLoaded, setIsLoaded] = useState(false);
-    const [hasError, setHasError] = useState(false);
-    const [debugUrl, setDebugUrl] = useState('');
     
-    // 1. Preload Images
     useEffect(() => {
         let loadedCount = 0;
-        let errorCount = 0;
         const total = config.frameCount;
-        const startIndex = config.startIndex ?? 1; // 默认从 1 开始
+        const startIndex = config.startIndex ?? 1;
         const imgs: HTMLImageElement[] = [];
 
         setIsLoaded(false);
-        setHasError(false);
 
         for (let i = 0; i < total; i++) {
             const img = new Image();
             const currentFileNumber = startIndex + i;
-            
             const numStr = config.digits > 0 
                 ? currentFileNumber.toString().padStart(config.digits, '0') 
                 : currentFileNumber.toString();
-            
             const fileName = `${config.baseUrl}${numStr}${config.suffix}`;
             img.src = fileName;
-            
-            if (i === 0) setDebugUrl(fileName);
 
             img.onload = () => {
                 loadedCount++;
                 if (loadedCount === total) setIsLoaded(true);
             };
-            img.onerror = () => {
-                errorCount++;
-                loadedCount++; 
-                if (errorCount === 1) console.error(`Failed to load frame: ${img.src}`);
-                if (errorCount > 5) setHasError(true); 
-                if (loadedCount === total) setIsLoaded(true);
-            }
+            img.onerror = () => { loadedCount++; if (loadedCount === total) setIsLoaded(true); }
             imgs.push(img);
         }
         imagesRef.current = imgs;
     }, [config]);
 
-    // 2. Register Scroll Container
     useEffect(() => {
         onScrollRef(containerRef.current);
     }, [onScrollRef]);
 
-    // 3. Draw Function
     useEffect(() => {
         if (containerRef.current) {
             (containerRef.current as any).updateFrame = (progress: number) => {
                 if (!canvasRef.current || imagesRef.current.length === 0) return;
-                
                 const ctx = canvasRef.current.getContext('2d');
                 if (!ctx) return;
-
-                const frameIndex = Math.min(
-                    config.frameCount - 1,
-                    Math.floor(progress * (config.frameCount - 1))
-                );
-                
+                const frameIndex = Math.min(config.frameCount - 1, Math.floor(progress * (config.frameCount - 1)));
                 const img = imagesRef.current[frameIndex];
-                
                 const cw = canvasRef.current.width;
                 const ch = canvasRef.current.height;
                 ctx.clearRect(0,0,cw,ch);
@@ -355,18 +366,15 @@ const ImageSequencePlayer: React.FC<{
                 if (img && img.complete && img.naturalWidth > 0) {
                     const iw = img.naturalWidth;
                     const ih = img.naturalHeight;
-                    
                     const scale = Math.max(cw / iw, ch / ih);
                     const x = (cw - iw * scale) / 2;
                     const y = (ch - ih * scale) / 2;
-
                     ctx.drawImage(img, x, y, iw * scale, ih * scale);
                 }
             };
         }
     }, [config, isLoaded]);
 
-    // 4. Handle Canvas Resize
     useEffect(() => {
         const handleResize = () => {
             if (canvasRef.current) {
@@ -375,42 +383,14 @@ const ImageSequencePlayer: React.FC<{
             }
         };
         window.addEventListener('resize', handleResize);
-        handleResize(); // Init
+        handleResize();
         return () => window.removeEventListener('resize', handleResize);
     }, []);
 
     return (
-        <div 
-            ref={containerRef}
-            className="relative z-30 video-scroll-section"
-            style={{ height: `${heightVh}vh` }} 
-            data-sequence-id={id}
-        >
+        <div ref={containerRef} className="relative z-30 video-scroll-section" style={{ height: `${heightVh}vh` }} data-sequence-id={id}>
             <div className="sticky top-0 w-full h-[100vh] overflow-hidden flex items-center justify-center bg-black">
-                {/* Loading State */}
-                {!isLoaded && !hasError && (
-                    <div className="absolute inset-0 flex items-center justify-center text-white/50 font-mono text-xs z-50">
-                        LOADING SEQ ({Math.round((imagesRef.current.filter(i=>i.complete).length / config.frameCount)*100)}%)...
-                    </div>
-                )}
-
-                {/* Error State */}
-                {hasError && (
-                    <div className="absolute inset-0 flex flex-col items-center justify-center z-50 pointer-events-none bg-black/90 p-6 text-center">
-                        <div className="text-red-500 font-mono font-bold text-xl mb-2">SEQ ERROR 404</div>
-                        <p className="text-white/50 text-xs font-mono mb-2">
-                           GitHub could not find the file.
-                        </p>
-                         <p className="text-orange-400 text-xs font-mono break-all bg-white/10 p-2 rounded max-w-lg">
-                           Attempted: {debugUrl}
-                        </p>
-                    </div>
-                )}
-
-                <canvas 
-                    ref={canvasRef}
-                    className="w-full h-full block"
-                />
+                <canvas ref={canvasRef} className="w-full h-full block" />
             </div>
         </div>
     );
@@ -420,11 +400,7 @@ const FloorMarquee: React.FC<{ direction: 'left' | 'right', text: string, classN
     return (
         <div 
             className="absolute left-[-20%] w-[140%] pointer-events-auto overflow-visible flex group"
-            style={{ 
-                transform: `translateZ(${DEPTHS.PROJECTS - 40}px) rotate(${rotate}deg)`, 
-                zIndex: 0,
-                ...style,
-            }}
+            style={{ transform: `translateZ(${DEPTHS.PROJECTS - 40}px) rotate(${rotate}deg)`, zIndex: 0, ...style }}
         >
             <motion.div
                 className={`flex whitespace-nowrap ${className}`}
@@ -454,9 +430,11 @@ const ProjectImageSquare: React.FC<{
             initial={{ opacity: 0, x: -300, rotate: Math.random() * 20 - 10 }}
             whileInView={{ opacity: 1, x: 0, rotate: style.rotate as number || 0 }}
             animate={{ scale: targetScale, opacity: isHovered ? 1 : (isAnyHovered ? 0.7 : 1), rotate: isHovered ? 0 : (style.rotate as number || 0), y: isHovered ? -40 : 0 }}
-            transition={{ type: "spring", stiffness: 50, damping: 14, mass: 1 }}
+            // 🟢 OPTIMIZED: Increased stiffness for snappier feel
+            transition={{ type: "spring", stiffness: 120, damping: 18, mass: 1 }}
             onMouseEnter={onHoverStart} onMouseLeave={onHoverEnd} onClick={onClick}
-            className="absolute cursor-pointer w-[380px] h-[380px] perspective-1000 group will-change-transform"
+            // 🟢 OPTIMIZED: Added transform-gpu and will-change-transform
+            className="absolute cursor-pointer w-[380px] h-[380px] perspective-1000 group will-change-transform transform-gpu"
             style={{ ...style, transformStyle: "preserve-3d" }}
         >
              <motion.div className="w-full h-full" animate={{ y: [0, -10, 0], rotateZ: [0, 1, 0], z: [0, 15, 0] }} transition={{ duration: 4 + Math.random(), repeat: Infinity, ease: "easeInOut" }} style={{ transformStyle: "preserve-3d" }}>
@@ -479,14 +457,67 @@ const ProjectImageSquare: React.FC<{
     );
 });
 
-// 🟢 [RESTORED] Full Featured Right Preview Card (Matching user's image)
+// 🟢 [UPDATED] Floating Tool Card Component with Config
+const FloatingToolIcon: React.FC<{ tool: string, index: number }> = ({ tool, index }) => {
+    const config = PREVIEW_LAYOUT_CONFIG.icons;
+    const randomRotate = useMemo(() => Math.random() * 40 - 20, []);
+    const randomY = useMemo(() => Math.random() * config.randomness - (config.randomness / 2), []);
+    const randomXOffset = useMemo(() => Math.random() * config.randomness, []);
+    
+    // Position Calculation using Config
+    const topPos = config.startY + (index * config.gapY) + randomY;
+    const leftPos = config.startX + (index * config.gapX) + randomXOffset;
+    
+    // 🟢 Calculate Exit Rotation (Throwing effect)
+    const enterRotate = useMemo(() => Math.random() * 90 - 45, []); // Random Start Rotate
+    const exitRotate = useMemo(() => Math.random() * 120 - 60, []); // Random Exit Rotate
+
+    return (
+        <motion.div
+            // 🟢 UPDATED CLASSNAME: Extremely transparent (bg-white/5), High Blur (backdrop-blur-2xl), White Border
+            className={`absolute ${config.sizeClass} bg-white/5 backdrop-blur-2xl border border-white/30 shadow-[0_4px_24px_0_rgba(0,0,0,0.05)] rounded-2xl flex items-center justify-center will-change-transform z-50 transform-gpu`}
+            initial={{ x: 500, opacity: 0, rotate: enterRotate + 90, scale: 0.5 }}
+            animate={{ x: 0, opacity: 1, rotate: randomRotate, scale: 1 }}
+            // 🟢 UPDATED EXIT: Throwing out with rotation and scale down
+            exit={{ 
+                x: 600, 
+                y: Math.random() * 200 - 100, // Scatter vertically
+                opacity: 0, 
+                rotate: exitRotate, // Spin out
+                scale: 0.5 
+            }}
+            // 🟢 OPTIMIZED: Faster, snappier transition (Stiffness 150)
+            transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.8, delay: 0.05 + (index * 0.03) }}
+            style={{ top: topPos, left: leftPos, transformStyle: "preserve-3d" }}
+        >
+             <motion.div
+                animate={{ y: [0, -5, 0] }}
+                transition={{ duration: 3 + Math.random(), repeat: Infinity, ease: "easeInOut" }}
+                className="w-full h-full flex items-center justify-center p-3 relative"
+             >
+                {/* Subtle Inner Highlight */}
+                <div className="absolute inset-0 rounded-2xl bg-gradient-to-tr from-white/10 to-transparent pointer-events-none" />
+                
+                {TOOL_ICONS[tool] ? (
+                    <img src={TOOL_ICONS[tool]} alt={tool} className="w-full h-full object-contain drop-shadow-sm opacity-90 relative z-10" />
+                ) : (
+                    <span className="text-[10px] font-bold text-[#1d1d1f] relative z-10">{tool.substring(0, 2)}</span>
+                )}
+             </motion.div>
+        </motion.div>
+    );
+});
+
+// 🟢 [UPDATED] Full Featured Right Preview Card with Layout Config
 const RightPreviewCard: React.FC<{ project: any, handleProjectEnter: () => void, handleProjectLeave: () => void, setSelectedProject: (p: any) => void }> = React.memo(({ project, handleProjectEnter, handleProjectLeave, setSelectedProject }) => {
     const cardRef = useRef<HTMLDivElement>(null);
     const mouseX = useMotionValue(0);
     const mouseY = useMotionValue(0);
+    const config = PREVIEW_LAYOUT_CONFIG;
     
-    // 1. Random Entrance Rotation
-    const randomRotate = useMemo(() => Math.random() * 10 - 5, []);
+    // 🟢 Randomized Entry and Exit Rotations for dynamic effect
+    const enterRotate = useMemo(() => Math.random() * 20 - 10, []); 
+    const exitRotate = useMemo(() => Math.random() * 30 - 15, []);
 
     const handleMouseMove = ({ clientX, clientY }: React.MouseEvent) => {
         if (!cardRef.current) return;
@@ -496,101 +527,105 @@ const RightPreviewCard: React.FC<{ project: any, handleProjectEnter: () => void,
     };
 
     return (
-        <motion.div 
-            ref={cardRef} 
-            onMouseMove={handleMouseMove} 
-            onMouseEnter={handleProjectEnter} 
-            onMouseLeave={handleProjectLeave} 
-            onClick={() => setSelectedProject(project)} 
-            className="absolute cursor-pointer will-change-transform" 
-            style={{ 
-                top: '15%', 
-                right: '1%', 
-                width: '750px', 
-                height: '320px', // Increased height to fit tools comfortably
-                zIndex: 50, 
+        <motion.div
+            className="absolute will-change-transform perspective-1000 transform-gpu"
+            style={{
+                top: config.card.top, 
+                right: config.card.right, 
+                width: config.card.width, 
+                height: config.card.height,
+                zIndex: 50,
                 transformStyle: "preserve-3d", 
-                transform: `translateZ(${DEPTHS.PROJECTS + 150}px)` 
-            }} 
-            // 2. Random Entrance Animation
-            initial={{ opacity: 0, x: 300, rotate: randomRotate, scale: 0.9 }} 
-            animate={{ opacity: 1, x: 0, rotate: 0, scale: 1 }} 
-            exit={{ opacity: 0, x: 300, rotate: randomRotate, scale: 0.9 }}
-            transition={{ type: "spring", stiffness: 60, damping: 12 }}
+            }}
         >
-             <motion.div 
-                className="w-full h-full" 
-                animate={{ y: [0, -8, 0], x: [0, 4, 0], rotateZ: [0, 0.5, 0] }} 
-                transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} 
-                style={{ transformStyle: "preserve-3d" }}
+            {project.tools && project.tools.map((tool: string, idx: number) => (
+                <FloatingToolIcon key={`${tool}-${idx}`} tool={tool} index={idx} />
+            ))}
+
+            <motion.div 
+                ref={cardRef} 
+                onMouseMove={handleMouseMove} 
+                onMouseEnter={handleProjectEnter} 
+                onMouseLeave={handleProjectLeave} 
+                onClick={() => setSelectedProject(project)} 
+                className="relative w-full h-full cursor-pointer will-change-transform transform-gpu"
+                style={{ transformStyle: "preserve-3d", transform: `translateZ(${DEPTHS.PROJECTS + 150}px)` }} 
+                // 🟢 Random Entrance
+                initial={{ opacity: 0, x: 400, rotate: enterRotate, scale: 0.9 }} 
+                animate={{ opacity: 1, x: 0, rotate: 0, scale: 1 }} 
+                // 🟢 Random Exit
+                exit={{ 
+                    opacity: 0, 
+                    x: 600, 
+                    rotate: exitRotate, // Spin out with random angle
+                    scale: 0.85 
+                }}
+                // 🟢 OPTIMIZED: Snappier transition
+                transition={{ type: "spring", stiffness: 120, damping: 16 }}
             >
-                <div className="w-full h-full rounded-[2.5rem] relative overflow-hidden group shadow-[0_30px_60px_-15px_rgba(0,0,0,0.2)] transition-shadow duration-300 hover:shadow-2xl border border-white/40">
-                    
-                    {/* 3. High Quality Material & Glass Background */}
-                    <div className="absolute inset-0 bg-white/70 backdrop-blur-[30px] rounded-[2.5rem]" />
-                    <div className="absolute inset-0 bg-gradient-to-br from-white/40 to-transparent opacity-50 pointer-events-none" />
+                <motion.div 
+                    className="w-full h-full" 
+                    animate={{ y: [0, -8, 0], x: [0, 4, 0], rotateZ: [0, 0.5, 0] }} 
+                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }} 
+                    style={{ transformStyle: "preserve-3d" }}
+                >
+                    {/* 🟢 iOS Glass Effect Container */}
+                    <div className={`w-full h-full ${config.card.borderRadius} relative overflow-hidden group shadow-[0_20px_50px_-10px_rgba(0,0,0,0.1)] transition-shadow duration-300 hover:shadow-2xl border border-white/30`}>
+                        {/* 1. Ultra-transparent background */}
+                        <div className={`absolute inset-0 bg-white/5 backdrop-blur-2xl ${config.card.borderRadius}`} />
+                        
+                        {/* 2. Subtle Gradient Overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-40 pointer-events-none" />
+                        
+                        {/* 3. Mouse Follow Glow (Simplified mask for performance) */}
+                        <motion.div 
+                            className={`absolute -inset-[1px] ${config.card.borderRadius} z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none blur-xl`} 
+                            style={{ 
+                                background: project.color, 
+                                opacity: 0.1,
+                                maskImage: useMotionTemplate`radial-gradient(400px circle at ${mouseX}px ${mouseY}px, black, transparent)`, 
+                                WebkitMaskImage: useMotionTemplate`radial-gradient(400px circle at ${mouseX}px ${mouseY}px, black, transparent)` 
+                            }} 
+                        />
 
-                    {/* Spotlight Effect */}
-                    <motion.div 
-                        className="absolute -inset-[1px] rounded-[2.5rem] z-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none blur-xl" 
-                        style={{ 
-                            background: project.color, 
-                            opacity: 0.15,
-                            maskImage: useMotionTemplate`radial-gradient(400px circle at ${mouseX}px ${mouseY}px, black, transparent)`, 
-                            WebkitMaskImage: useMotionTemplate`radial-gradient(400px circle at ${mouseX}px ${mouseY}px, black, transparent)` 
-                        }} 
-                    />
+                        {/* Card Content Layout using Config */}
+                        <div className={`relative z-10 flex flex-col h-full justify-between ${config.card.padding}`}>
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h2 className={`${config.text.titleSize} font-albert-black text-[#1d1d1f] tracking-tight drop-shadow-sm leading-none ${config.text.titleGap}`}>
+                                        {project.title}
+                                    </h2>
+                                    <div className="flex items-center gap-2 mb-4">
+                                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: project.color }} />
+                                        <span className={`text-xs font-bold text-gray-400 uppercase tracking-widest ${config.text.labelSize}`}>
+                                            {project.label}
+                                        </span>
+                                    </div>
+                                </div>
 
-                    {/* Content Container */}
-                    <div className="relative z-10 flex flex-col h-full justify-between p-10">
-                        <div className="flex justify-between items-start">
-                            <div>
-                                {/* Title */}
-                                <h2 className="text-5xl font-albert-black text-[#1d1d1f] tracking-tight drop-shadow-sm leading-none mb-3">{project.title}</h2>
-                                
-                                {/* Tag / Label */}
-                                <div className="flex items-center gap-2 mb-4">
-                                     <div className="w-2 h-2 rounded-full" style={{ backgroundColor: project.color }} />
-                                     <span className="text-xs font-bold text-gray-400 uppercase tracking-widest">{project.label}</span>
+                                <div 
+                                    className={`px-4 py-2 rounded-xl ${config.text.dateStyle} tracking-widest border border-white/30 shadow-sm backdrop-blur-md flex flex-col items-end`}
+                                    style={{ 
+                                        backgroundColor: 'rgba(255,255,255,0.2)', 
+                                        color: '#333' 
+                                    }}
+                                >
+                                    <span className="text-[10px] text-gray-500 mb-0.5">TIMELINE</span>
+                                    <span>{project.year}</span>
                                 </div>
                             </div>
-
-                            {/* Year Tag (Top Right) */}
-                            <span 
-                                className="px-3 py-1 rounded-full text-xs font-bold tracking-widest border"
-                                style={{ 
-                                    backgroundColor: 'rgba(255,255,255,0.5)', 
-                                    borderColor: 'rgba(255,255,255,0.6)', 
-                                    color: '#555' 
-                                }}
-                            >
-                                {project.year}
-                            </span>
-                        </div>
-                        
-                        {/* Description */}
-                        <p className="text-lg text-gray-600 font-albert-regular leading-relaxed max-w-xl line-clamp-2">{project.desc}</p>
-
-                        {/* Tools Section (Bottom Right) */}
-                        <div className="absolute bottom-10 right-10 flex gap-3">
-                            {project.tools && project.tools.map((tool: string) => (
-                                <div key={tool} className="w-12 h-12 rounded-xl bg-white border border-gray-100 flex items-center justify-center shadow-sm hover:scale-110 transition-transform duration-200" title={tool}>
-                                    {TOOL_ICONS[tool] ? (
-                                        <img src={TOOL_ICONS[tool]} alt={tool} className="w-7 h-7 object-contain" />
-                                    ) : (
-                                        <span className="text-[10px] font-bold text-gray-500">{tool.substring(0, 2)}</span>
-                                    )}
-                                </div>
-                            ))}
+                            
+                            <p className={`${config.text.descSize} text-gray-600 font-albert-regular leading-relaxed max-w-xl ${config.text.descLineClamp}`}>
+                                {project.desc}
+                            </p>
                         </div>
                     </div>
-                </div>
-             </motion.div>
+                </motion.div>
+            </motion.div>
         </motion.div>
     );
 });
 
-// --- REUSABLE COMPONENT: Video Section ---
 const VideoSection: React.FC<{ url: string, heightVh: number, onScrollRef: (el: HTMLDivElement | null) => void, videoId: number, registerVideo: (id: number, el: HTMLVideoElement) => void }> = ({ url, heightVh, onScrollRef, videoId, registerVideo }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const videoRef = useRef<HTMLVideoElement>(null);
@@ -629,32 +664,27 @@ const ImageBlock: React.FC<{ url: string, index: number }> = ({ url, index }) =>
 const GalleryModalView: React.FC<{ images: string[], project: any }> = ({ images, project }) => {
     const scrollContainerRef = useRef<HTMLDivElement>(null);
     const sectionRefs = useRef<Map<number, HTMLDivElement>>(new Map());
-    
-    // For Video Mode
     const videoElements = useRef<Map<number, HTMLVideoElement>>(new Map());
     const videoStates = useRef<Map<number, { targetTime: number, currentTime: number }>>(new Map());
-
     const [scrollVal, setScrollVal] = useState(0);
     const [mouseVal, setMouseVal] = useState(0);
+    const [isScrolling, setIsScrolling] = useState(false);
+    const [thumbState, setThumbState] = useState({ height: 0, top: 0 });
+    const scrollTimeout = useRef<any>(null);
 
-    // Check configuration
     const hasSeq1 = !!project.sequenceConfig1;
-    const hasSeq2 = !!project.sequenceConfig2;
     const hasVideo1 = !!project.scrollVideoUrl;
-    const hasVideo2 = !!project.scrollVideoUrl2;
 
     const registerVideo = (id: number, el: HTMLVideoElement) => {
         videoElements.current.set(id, el);
     };
 
-    // 🟢 HYBRID LOOP: Handles BOTH Video Damping and Canvas Drawing
     useEffect(() => {
         let animationFrameId: number;
 
         const updateFrames = () => {
             sectionRefs.current.forEach((section, id) => {
                 if (!section) return;
-                
                 const rect = section.getBoundingClientRect();
                 const containerRect = scrollContainerRef.current?.getBoundingClientRect();
                 if(!containerRect) return;
@@ -662,16 +692,13 @@ const GalleryModalView: React.FC<{ images: string[], project: any }> = ({ images
                 const viewportHeight = containerRect.height;
                 const sectionHeight = section.clientHeight;
                 const scrollDistance = sectionHeight - viewportHeight;
-                
                 const distanceTop = containerRect.top - rect.top;
-                
                 let progress = 0;
                 if (scrollDistance > 0) {
                     progress = distanceTop / scrollDistance;
                     progress = Math.max(0, Math.min(1, progress));
                 }
 
-                // 2. DISPATCH TO CORRECT HANDLER
                 if ((section as any).updateFrame) {
                     (section as any).updateFrame(progress);
                 } else {
@@ -691,27 +718,31 @@ const GalleryModalView: React.FC<{ images: string[], project: any }> = ({ images
                     }
                 }
             });
-            
             animationFrameId = requestAnimationFrame(updateFrames);
         };
-
         animationFrameId = requestAnimationFrame(updateFrames);
         return () => cancelAnimationFrame(animationFrameId);
     }, []);
 
     const handleScroll = () => {
         if (scrollContainerRef.current) {
-            setScrollVal(Math.round(scrollContainerRef.current.scrollTop));
+            const el = scrollContainerRef.current;
+            const scrollTop = el.scrollTop;
+            setScrollVal(Math.round(scrollTop));
+            const { scrollHeight, clientHeight } = el;
+            const heightPerc = (clientHeight / scrollHeight) * 100;
+            const topPerc = (scrollTop / scrollHeight) * 100;
+
+            setThumbState({ height: Math.max(heightPerc, 5), top: topPerc });
+            setIsScrolling(true);
+            if (scrollTimeout.current) clearTimeout(scrollTimeout.current);
+            scrollTimeout.current = setTimeout(() => { setIsScrolling(false); }, 600);
         }
     };
 
-    const handleMouseMove = (e: React.MouseEvent) => {
-        setMouseVal(Math.round(e.clientX));
-    };
+    const handleMouseMove = (e: React.MouseEvent) => { setMouseVal(Math.round(e.clientX)); };
 
-    // Helper Styles
     const DESIGN_WIDTH = 1920;
-    // 🟢 UPDATED: Scale factor set to 0.6 (60% size)
     const SCALE_FACTOR = 0.6; 
     const MODAL_WIDTH_VW = 95 * SCALE_FACTOR; 
     const getPos = (x: number, y: number) => ({
@@ -720,173 +751,107 @@ const GalleryModalView: React.FC<{ images: string[], project: any }> = ({ images
     });
     const getSize = (size: number) => `${(size / DESIGN_WIDTH) * MODAL_WIDTH_VW}vw`;
     const textConfig = project.detailText;
-
-    // 🟢 [RESTORING TEXT ANIMATIONS] 
-    // Calculating relative tops based on video vs sequence
-    const SEQUENCE_HEIGHT_1 = VIDEO_1_SCROLL_HEIGHT_VH; 
-    const SEQUENCE_HEIGHT_2 = VIDEO_2_SCROLL_HEIGHT_VH;
-    const mediaHeight1 = hasSeq1 ? SEQUENCE_HEIGHT_1 : (hasVideo1 ? VIDEO_1_SCROLL_HEIGHT_VH : 0);
-    // 🟢 UPDATED: Force mediaHeight2 to 0 as the section is removed
+    const mediaHeight1 = hasSeq1 ? VIDEO_1_SCROLL_HEIGHT_VH : (hasVideo1 ? VIDEO_1_SCROLL_HEIGHT_VH : 0);
     const mediaHeight2 = 0; 
-
-    // 🟢 NEW CARDS CONFIGURATION
-    // You can adjust 'width', 'height', 'rotate' here. 
-    // xOffset is added to base x=465.
-    const group1Cards = [
-        { id: 1, xOffset: 0,   yOffset: 0, width: 300, height: 400, rotate: -5, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/1.png' },
-        { id: 2, xOffset: 350, yOffset: 50, width: 300, height: 400, rotate: 3, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/2.png' },
-        { id: 3, xOffset: 700, yOffset: -20, width: 300, height: 400, rotate: -2, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/3.png' },
-        { id: 4, xOffset: 1050, yOffset: 40, width: 300, height: 400, rotate: 6, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/4.png' }
-    ];
-
     const waveImages = [
         'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/down.png',
         'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/midle.png',
         'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/up.png'
     ];
-
+    const group1Cards = [
+        { id: 1, xOffset: -250,   yOffset: 7600, width: 360, height: 208, rotate: 0, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/1.png' },
+        { id: 2, xOffset: 125, yOffset: 7600, width: 360, height: 125, rotate: 0, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/2.png' },
+        { id: 3, xOffset: 500, yOffset: 7600, width: 360, height: 172, rotate: 0, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/3.png' },
+        { id: 4, xOffset: 875, yOffset: 7600, width: 360, height: 208, rotate: 0, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/4.png' }
+    ];
     const group3Cards = [
-        { id: 1, xOffset: 0,   yOffset: 0, width: 280, height: 350, rotate: 5, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/d1.png' },
-        { id: 2, xOffset: 320, yOffset: -40, width: 280, height: 350, rotate: -4, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/d2.png' },
-        { id: 3, xOffset: 640, yOffset: 20, width: 280, height: 350, rotate: 3, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/d3.png' },
-        { id: 4, xOffset: 960, yOffset: -10, width: 280, height: 350, rotate: -6, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/d4.png' }
+        { id: 1, xOffset: 0,   yOffset: 9000, width: 368, height: 512, rotate: 5, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/d1.png' },
+        { id: 2, xOffset: 320, yOffset: 9050, width: 368, height: 512, rotate: -4, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/d2.png' },
+        { id: 3, xOffset: 640, yOffset: 9020, width: 368, height: 512, rotate: 3, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/d3.png' },
+        { id: 4, xOffset: 960, yOffset: 9060, width: 368, height: 512, rotate: -6, img: 'https://raw.githubusercontent.com/jayneysil520-dev/jayneysil/refs/heads/main/%E9%95%BF%E5%9B%BE/d4.png' }
     ];
 
     return (
-        <div
-            ref={scrollContainerRef}
-            onScroll={handleScroll}
-            onMouseMove={handleMouseMove}
-            className="w-full h-full overflow-y-auto overflow-x-hidden floating-scrollbar relative z-10 p-0 bg-black"
-        >
-            <div className="fixed top-24 right-10 z-[70] font-mono text-[10px] text-green-400 bg-black/80 backdrop-blur-md px-3 py-2 rounded border border-green-500/30 pointer-events-none tracking-widest flex flex-col gap-1 shadow-lg">
-                <span className="flex justify-between gap-4"><span>SCROLL Y:</span> <span>{scrollVal}</span></span>
-                <span className="flex justify-between gap-4"><span>MOUSE X:</span> <span>{mouseVal}</span></span>
-                <span className="text-orange-400 font-bold">MODE: {hasSeq1 ? 'CANVAS-SEQ' : 'VIDEO-SMOOTH'}</span>
-            </div>
+        <div className="relative w-full h-full bg-black overflow-hidden">
+            <div
+                ref={scrollContainerRef}
+                onScroll={handleScroll}
+                onMouseMove={handleMouseMove}
+                className="w-full h-full overflow-y-auto overflow-x-hidden no-scrollbar relative z-10 p-0"
+            >
+                <div className="fixed top-24 right-10 z-[70] font-mono text-[10px] text-green-400 bg-black/80 backdrop-blur-md px-3 py-2 rounded border border-green-500/30 pointer-events-none tracking-widest flex flex-col gap-1 shadow-lg">
+                    <span className="flex justify-between gap-4"><span>SCROLL Y:</span> <span>{scrollVal}</span></span>
+                    <span className="flex justify-between gap-4"><span>MOUSE X:</span> <span>{mouseVal}</span></span>
+                    <span className="text-orange-400 font-bold">MODE: {hasSeq1 ? 'CANVAS-SEQ' : 'VIDEO-SMOOTH'}</span>
+                </div>
 
-            {/* 🟢 MODIFIED: Restored inner content to w-full because the outer modal is now 60vw */}
-            <div className="relative w-full mx-auto">
-                {/* 1. Image 1 */}
-                <ImageBlock url={images[0]} index={0} />
-                
-                {/* 2. Image 2 */}
-                <ImageBlock url={images[1]} index={1} />
+                <div className="relative w-full mx-auto">
+                    <ImageBlock url={images[0]} index={0} />
+                    <ImageBlock url={images[1]} index={1} />
 
-                {/* 3. Media 1 (Canvas OR Video) */}
-                {hasSeq1 ? (
-                    <ImageSequencePlayer 
-                        config={project.sequenceConfig1}
-                        heightVh={VIDEO_1_SCROLL_HEIGHT_VH}
-                        onScrollRef={(el) => { if(el) sectionRefs.current.set(1, el); }}
-                        id={1}
-                    />
-                ) : hasVideo1 && (
-                    <VideoSection 
-                        url={project.scrollVideoUrl} 
-                        heightVh={VIDEO_1_SCROLL_HEIGHT_VH} 
-                        onScrollRef={(el) => { if(el) sectionRefs.current.set(1, el); }}
-                        videoId={1}
-                        registerVideo={registerVideo}
-                    />
-                )}
-
-                {/* 4. Image 3 */}
-                <ImageBlock url={images[2]} index={2} />
-
-                {/* 🟢 DELETED: Media 2 and Image 4 code blocks as requested */}
-
-                {/* 🟢 OVERLAY LAYERS (TEXT + NEW INTERACTIVE ELEMENTS) */}
-                <div className="absolute inset-0 w-full h-full pointer-events-none z-50">
-                    {textConfig && (
-                        <>
-                            {/* --- Original Text Groups (Preserved) --- */}
-                            <motion.div style={{ position: 'absolute', ...getPos(215, 2850) }} initial={{ x: -100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
-                                <span style={{ fontFamily: "'Franklin Gothic Medium Cond', sans-serif", fontSize: getSize(240), lineHeight: '1', color: 'white' }} className="block drop-shadow-2xl">{textConfig.main}</span>
-                            </motion.div>
-                            <motion.div style={{ position: 'absolute', ...getPos(228, 3070) }} initial={{ x: -50, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6, delay: 0.1 }} viewport={{ once: true }}>
-                                 <span style={{ fontFamily: "'OPPOSans H', sans-serif", fontSize: getSize(14), color: 'white', fontWeight: '900', letterSpacing: '1px' }} className="block drop-shadow-lg">{textConfig.sub}</span>
-                            </motion.div>
-                             <motion.div style={{ position: 'absolute', ...getPos(1535, 3005) }} initial={{ x: 100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
-                                 <span style={{ fontFamily: "'Arizonia', cursive", fontSize: getSize(80), color: 'white' }} className="block drop-shadow-lg">{textConfig.signature}</span>
-                            </motion.div>
-
-                            <motion.div style={{ position: 'absolute', left: getPos(215, 5005).left, top: `calc(${getPos(215, 5005).top} + ${mediaHeight1}vh)` }} initial={{ x: -100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
-                                <span style={{ fontFamily: "'Franklin Gothic Medium Cond', sans-serif", fontSize: getSize(240), lineHeight: '1', color: 'white' }} className="block drop-shadow-2xl">Rabbi</span>
-                            </motion.div>
-                            <motion.div style={{ position: 'absolute', left: getPos(228, 5225).left, top: `calc(${getPos(228, 5225).top} + ${mediaHeight1}vh)` }} initial={{ x: -50, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6, delay: 0.1 }} viewport={{ once: true }}>
-                                 <span style={{ fontFamily: "'OPPOSans H', sans-serif", fontSize: getSize(14), color: 'white', fontWeight: '900', letterSpacing: '1px' }} className="block drop-shadow-lg">好奇心先锋 CURIOSITY PIONEER</span>
-                            </motion.div>
-                             <motion.div style={{ position: 'absolute', left: getPos(1315, 5155).left, top: `calc(${getPos(1315, 5155).top} + ${mediaHeight1}vh)` }} initial={{ x: 100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
-                                 <span style={{ fontFamily: "'Arizonia', cursive", fontSize: getSize(80), color: 'white' }} className="block drop-shadow-lg">Rabbi</span>
-                            </motion.div>
-
-                            {[
-                                { name: 'Carro', sub: '环保监督员 ENVIRONMENTAL SUPERVISOR', yName: 7155, ySub: 7378, ySig: 7305 },
-                                { name: 'Ollie', sub: '情感纽带 EMOTIONAL BOND', yName: 9310, ySub: 9528, ySig: 9450 },
-                                { name: 'Oliver', sub: '智慧守护者 THE WISDOM GUIDE', yName: 11455, ySub: 11677, ySig: 11600 }
-                            ].map((item, idx) => (
-                                <React.Fragment key={item.name}>
-                                    <motion.div style={{ position: 'absolute', left: getPos(215, item.yName).left, top: `calc(${getPos(215, item.yName).top} + ${mediaHeight1 + mediaHeight2}vh)` }} initial={{ x: -100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
-                                        <span style={{ fontFamily: "'Franklin Gothic Medium Cond', sans-serif", fontSize: getSize(240), lineHeight: '1', color: 'white' }} className="block drop-shadow-2xl">{item.name}</span>
-                                    </motion.div>
-                                    <motion.div style={{ position: 'absolute', left: getPos(230, item.ySub).left, top: `calc(${getPos(230, item.ySub).top} + ${mediaHeight1 + mediaHeight2}vh)` }} initial={{ x: -50, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6, delay: 0.1 }} viewport={{ once: true }}>
-                                        <span style={{ fontFamily: "'OPPOSans H', sans-serif", fontSize: getSize(14), color: 'white', fontWeight: '900', letterSpacing: '1px' }} className="block drop-shadow-lg">{item.sub}</span>
-                                    </motion.div>
-                                    <motion.div style={{ position: 'absolute', left: getPos(1515, item.ySig).left, top: `calc(${getPos(1515, item.ySig).top} + ${mediaHeight1 + mediaHeight2}vh)` }} initial={{ x: 100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
-                                        <span style={{ fontFamily: "'Arizonia', cursive", fontSize: getSize(80), color: 'white' }} className="block drop-shadow-lg">{item.name}</span>
-                                    </motion.div>
-                                </React.Fragment>
-                            ))}
-
-                            {/* 🟢 NEW SECTION 1: 4 Cards at y=7745 */}
-                            {group1Cards.map((card, idx) => (
-                                <InteractivePhotoCard
-                                    key={`g1-${card.id}`}
-                                    x={465 + card.xOffset} // Base 465 + offset
-                                    y={7745 + card.yOffset}
-                                    width={card.width}
-                                    height={card.height}
-                                    rotate={card.rotate}
-                                    imgUrl={card.img}
-                                    delay={idx * 0.1}
-                                    mediaOffsetVh={mediaHeight1 + mediaHeight2}
-                                    modalWidthVw={MODAL_WIDTH_VW}
-                                />
-                            ))}
-
-                            {/* 🟢 NEW SECTION 2: Wave Images at y=8322 */}
-                            <WaveImageGroup
-                                x={465}
-                                y={8322}
-                                images={waveImages}
-                                mediaOffsetVh={mediaHeight1 + mediaHeight2}
-                                modalWidthVw={MODAL_WIDTH_VW}
-                            />
-
-                            {/* 🟢 NEW SECTION 3: 4 Cards at y=9355 */}
-                            {group3Cards.map((card, idx) => (
-                                <InteractivePhotoCard
-                                    key={`g3-${card.id}`}
-                                    x={465 + card.xOffset} // Base 465 + offset
-                                    y={9355 + card.yOffset}
-                                    width={card.width}
-                                    height={card.height}
-                                    rotate={card.rotate}
-                                    imgUrl={card.img}
-                                    delay={idx * 0.1}
-                                    mediaOffsetVh={mediaHeight1 + mediaHeight2}
-                                    modalWidthVw={MODAL_WIDTH_VW}
-                                />
-                            ))}
-
-                        </>
+                    {hasSeq1 ? (
+                        <ImageSequencePlayer config={project.sequenceConfig1} heightVh={VIDEO_1_SCROLL_HEIGHT_VH} onScrollRef={(el) => { if(el) sectionRefs.current.set(1, el); }} id={1} />
+                    ) : hasVideo1 && (
+                        <VideoSection url={project.scrollVideoUrl} heightVh={VIDEO_1_SCROLL_HEIGHT_VH} onScrollRef={(el) => { if(el) sectionRefs.current.set(1, el); }} videoId={1} registerVideo={registerVideo} />
                     )}
-                </div>
 
-                <div className="w-full py-32 text-center bg-black">
-                    <p className="text-white/30 text-sm">End of Project Gallery</p>
+                    <ImageBlock url={images[2]} index={2} />
+
+                    <div className="absolute inset-0 w-full h-full pointer-events-none z-50">
+                        {textConfig && (
+                            <>
+                                <motion.div style={{ position: 'absolute', ...getPos(215, 3015) }} initial={{ x: -100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
+                                    <span style={{ fontFamily: "'Franklin Gothic Medium Cond', sans-serif", fontSize: getSize(240), lineHeight: '1', color: 'white' }} className="block drop-shadow-2xl">{textConfig.main}</span>
+                                </motion.div>
+                                <motion.div style={{ position: 'absolute', ...getPos(228, 3235) }} initial={{ x: -50, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6, delay: 0.1 }} viewport={{ once: true }}>
+                                     <span style={{ fontFamily: "'OPPOSans H', sans-serif", fontSize: getSize(14), color: 'white', fontWeight: '900', letterSpacing: '1px' }} className="block drop-shadow-lg">{textConfig.sub}</span>
+                                </motion.div>
+                                 <motion.div style={{ position: 'absolute', ...getPos(1535, 3170) }} initial={{ x: 100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
+                                     <span style={{ fontFamily: "'Arizonia', cursive", fontSize: getSize(80), color: 'white' }} className="block drop-shadow-lg">{textConfig.signature}</span>
+                                </motion.div>
+                                <motion.div style={{ position: 'absolute', left: getPos(215, 5005).left, top: `calc(${getPos(215, 3605).top} + ${mediaHeight1}vh)` }} initial={{ x: -100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
+                                    <span style={{ fontFamily: "'Franklin Gothic Medium Cond', sans-serif", fontSize: getSize(240), lineHeight: '1', color: 'white' }} className="block drop-shadow-2xl">Rabbi</span>
+                                </motion.div>
+                                <motion.div style={{ position: 'absolute', left: getPos(228, 5225).left, top: `calc(${getPos(228, 3825).top} + ${mediaHeight1}vh)` }} initial={{ x: -50, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6, delay: 0.1 }} viewport={{ once: true }}>
+                                     <span style={{ fontFamily: "'OPPOSans H', sans-serif", fontSize: getSize(14), color: 'white', fontWeight: '900', letterSpacing: '1px' }} className="block drop-shadow-lg">好奇心先锋 CURIOSITY PIONEER</span>
+                                </motion.div>
+                                 <motion.div style={{ position: 'absolute', left: getPos(1315, 5155).left, top: `calc(${getPos(1315, 3755).top} + ${mediaHeight1}vh)` }} initial={{ x: 100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
+                                     <span style={{ fontFamily: "'Arizonia', cursive", fontSize: getSize(80), color: 'white' }} className="block drop-shadow-lg">Rabbi</span>
+                                </motion.div>
+                                {[
+                                    { name: 'Carro', sub: '环保监督员 ENVIRONMENTAL SUPERVISOR', yName: 5876, ySub: 6091, ySig: 6026 },
+                                    { name: 'Ollie', sub: '情感纽带 EMOTIONAL BOND', yName: 8145, ySub: 8363, ySig: 8285 },
+                                    { name: 'Oliver', sub: '智慧守护者 THE WISDOM GUIDE', yName: 10420, ySub: 10642, ySig: 10565 }
+                                ].map((item, idx) => (
+                                    <React.Fragment key={item.name}>
+                                        <motion.div style={{ position: 'absolute', left: getPos(215, item.yName).left, top: `calc(${getPos(215, item.yName).top} + ${mediaHeight1 + mediaHeight2}vh)` }} initial={{ x: -100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6 }} viewport={{ once: true }}>
+                                            <span style={{ fontFamily: "'Franklin Gothic Medium Cond', sans-serif", fontSize: getSize(240), lineHeight: '1', color: 'white' }} className="block drop-shadow-2xl">{item.name}</span>
+                                        </motion.div>
+                                        <motion.div style={{ position: 'absolute', left: getPos(230, item.ySub).left, top: `calc(${getPos(230, item.ySub).top} + ${mediaHeight1 + mediaHeight2}vh)` }} initial={{ x: -50, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.6, delay: 0.1 }} viewport={{ once: true }}>
+                                            <span style={{ fontFamily: "'OPPOSans H', sans-serif", fontSize: getSize(14), color: 'white', fontWeight: '900', letterSpacing: '1px' }} className="block drop-shadow-lg">{item.sub}</span>
+                                        </motion.div>
+                                        <motion.div style={{ position: 'absolute', left: getPos(1515, item.ySig).left, top: `calc(${getPos(1515, item.ySig).top} + ${mediaHeight1 + mediaHeight2}vh)` }} initial={{ x: 100, opacity: 0 }} whileInView={{ x: 0, opacity: 1 }} transition={{ duration: 0.8 }} viewport={{ once: true }}>
+                                            <span style={{ fontFamily: "'Arizonia', cursive", fontSize: getSize(80), color: 'white' }} className="block drop-shadow-lg">{item.name}</span>
+                                        </motion.div>
+                                    </React.Fragment>
+                                ))}
+                                {group1Cards.map((card, idx) => (
+                                    <InteractivePhotoCard key={`g1-${card.id}`} x={465 + card.xOffset} y={7745 + card.yOffset} width={card.width} height={card.height} rotate={card.rotate} imgUrl={card.img} delay={idx * 0.1} mediaOffsetVh={mediaHeight1 + mediaHeight2} modalWidthVw={MODAL_WIDTH_VW} />
+                                ))}
+                                <WaveImageGroup x={465} y={8322} images={waveImages} mediaOffsetVh={mediaHeight1 + mediaHeight2} modalWidthVw={MODAL_WIDTH_VW} />
+                                {group3Cards.map((card, idx) => (
+                                    <InteractivePhotoCard key={`g3-${card.id}`} x={465 + card.xOffset} y={9355 + card.yOffset} width={card.width} height={card.height} rotate={card.rotate} imgUrl={card.img} delay={idx * 0.1} mediaOffsetVh={mediaHeight1 + mediaHeight2} modalWidthVw={MODAL_WIDTH_VW} />
+                                ))}
+                            </>
+                        )}
+                    </div>
+                    <div className="w-full py-32 text-center bg-black">
+                        <p className="text-white/30 text-sm">End of Project Gallery</p>
+                    </div>
                 </div>
+            </div>
+            <div className={`absolute right-1.5 top-0 bottom-0 w-1.5 pointer-events-none transition-opacity duration-500 ease-out z-50 mix-blend-difference ${isScrolling ? 'opacity-100' : 'opacity-0'}`}>
+                <div className="absolute w-full bg-white/60 rounded-full backdrop-blur-md" style={{ height: `${thumbState.height}%`, top: `${thumbState.top}%`, transition: 'top 0.05s linear' }} />
             </div>
         </div>
     );
@@ -899,9 +864,25 @@ const VinylProjects: React.FC = () => {
     const { scrollYProgress } = useScroll({ target: containerRef, offset: ["start start", "end end"] });
     const floorY = useTransform(scrollYProgress, [0, 1], ["0%", "-200%"]); 
     
-    // ... (Keep existing VinylProjects logic for deck view) ...
-    // To save tokens, I am ensuring the GalleryModalView above is the key change.
-    // The rest of the component remains largely identical to the previous version but imports the new GalleryModalView.
+    // 🟢 OPTIMIZATION: Debounce Hover Logic
+    // This prevents the RightPreviewCard from rapidly mounting/unmounting when the mouse moves quickly across multiple cards.
+    // It only triggers if the user hovers for at least 80ms.
+    const hoverTimeout = useRef<any>(null);
+
+    const handleProjectHoverStart = useCallback((project: any) => {
+        if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+        hoverTimeout.current = setTimeout(() => {
+            setHoveredProject(project);
+        }, 80); // 80ms delay
+    }, []);
+
+    const handleProjectHoverEnd = useCallback(() => {
+        if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
+        // Add a slight delay before hiding to prevent flickering during diagonal movement
+        hoverTimeout.current = setTimeout(() => {
+            setHoveredProject(null);
+        }, 80);
+    }, []);
 
     const x = useMotionValue(0);
     const y = useMotionValue(0);
@@ -936,7 +917,16 @@ const VinylProjects: React.FC = () => {
                  <div className="absolute inset-0 flex items-center justify-center perspective-2000">
                     <motion.div className="relative w-full max-w-[1600px] will-change-transform transform-gpu" style={{ rotateX, rotateY, x: translateX, scale: 0.65, aspectRatio: '16/9', transformStyle: "preserve-3d" }}>
                         <AnimatePresence mode="wait">
-                            {hoveredProject && <RightPreviewCard project={hoveredProject} handleProjectEnter={() => setHoveredProject(hoveredProject)} handleProjectLeave={() => setHoveredProject(null)} setSelectedProject={setSelectedProject} />}
+                            {hoveredProject && (
+                                <RightPreviewCard 
+                                    key={hoveredProject.id} 
+                                    project={hoveredProject} 
+                                    // Keep the immediate clear for safety on direct interaction
+                                    handleProjectEnter={() => {}} 
+                                    handleProjectLeave={() => setHoveredProject(null)} 
+                                    setSelectedProject={setSelectedProject} 
+                                />
+                            )}
                         </AnimatePresence>
                         <motion.div className="absolute inset-0 w-full h-full will-change-transform" style={{ y: floorY, transformStyle: "preserve-3d" }}>
                             <div className="absolute inset-[-50%] bg-white transform-preserve-3d" style={{ transform: `translateZ(${DEPTHS.FLOOR}px)` }} />
@@ -944,7 +934,16 @@ const VinylProjects: React.FC = () => {
                             <div className="absolute w-full h-full pointer-events-none" style={{ zIndex: 10, transformStyle: "preserve-3d", transform: `translateZ(${DEPTHS.PROJECTS}px)` }}>
                                 {projects.map((proj, idx) => (
                                     <div key={proj.id} className="pointer-events-auto">
-                                        <ProjectImageSquare project={proj} style={cardPositions[idx] as any} onClick={() => setSelectedProject(proj)} onHoverStart={() => setHoveredProject(proj)} onHoverEnd={() => setHoveredProject(null)} isHovered={hoveredProject?.id === proj.id} isAnyHovered={!!hoveredProject} isSelected={selectedProject?.id === proj.id} />
+                                        <ProjectImageSquare 
+                                            project={proj} 
+                                            style={cardPositions[idx] as any} 
+                                            onClick={() => setSelectedProject(proj)} 
+                                            onHoverStart={() => handleProjectHoverStart(proj)} 
+                                            onHoverEnd={handleProjectHoverEnd} 
+                                            isHovered={hoveredProject?.id === proj.id} 
+                                            isAnyHovered={!!hoveredProject} 
+                                            isSelected={selectedProject?.id === proj.id} 
+                                        />
                                     </div>
                                 ))}
                             </div>
@@ -962,7 +961,6 @@ const VinylProjects: React.FC = () => {
                                 animate={{ y: 0, opacity: 1, scale: 1 }} 
                                 exit={{ y: "110%", opacity: 0, scale: 0.95 }} 
                                 transition={{ type: "spring", damping: 24, stiffness: 180, mass: 0.8 }} 
-                                // 🟢 MODIFIED: Width set to 60vw for projects 1,2,3
                                 className={`relative ${[1, 2, 3].includes(selectedProject.id) ? 'w-[60vw]' : 'w-[95vw]'} h-[95vh] rounded-[3rem] pointer-events-auto shadow-2xl overflow-hidden`} 
                                 onClick={(e) => e.stopPropagation()}
                             >

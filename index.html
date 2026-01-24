@@ -133,6 +133,15 @@
       background: #ccc;
       border-radius: 4px;
     }
+    
+    /* 🟢 Utility to hide scrollbar completely for custom UI */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
 
     .font-albert-black {
       font-family: 'Albert Sans', sans-serif;
